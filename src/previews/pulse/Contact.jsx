@@ -47,7 +47,7 @@ export default function Contact() {
             {submitted ? (
               <div className={s.success}>
                 <div
-                  style={{ fontSize: '3rem', marginBottom: 16, filter: 'drop-shadow(0 0 14px var(--cyan))' }}
+                  style={{ fontSize: '3rem', marginBottom: 16, filter: 'drop-shadow(0 0 14px var(--amber))' }}
                   aria-hidden="true"
                 >
                   &#x25CE;
@@ -156,7 +156,7 @@ export default function Contact() {
               <p>
                 <a
                   href={`mailto:${BRAND.email}`}
-                  style={{ color: 'var(--cyan)', textDecoration: 'underline' }}
+                  style={{ color: 'var(--amber)', textDecoration: 'underline' }}
                 >
                   {BRAND.email}
                 </a>
@@ -165,7 +165,7 @@ export default function Contact() {
                   href={BRAND.instagramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ color: 'var(--cyan)', textDecoration: 'underline' }}
+                  style={{ color: 'var(--amber)', textDecoration: 'underline' }}
                 >
                   {BRAND.instagram}
                 </a>

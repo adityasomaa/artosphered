@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { ARTICLES, ARTICLE_CATS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
+
+/* tone cycle: varied per card */
+const TONES = ['warm', 'holo', 'amber', 'warm', 'holo', 'amber']
 
 export default function CultureReport() {
   const [cat, setCat] = useState('All')
@@ -42,13 +46,10 @@ export default function CultureReport() {
               data-reveal-delay={i * 60}
             >
               <div className={s.crImg}>
-                <img
-                  src={`https://picsum.photos/seed/${a.seed}/640/420`}
-                  alt={a.title}
-                  loading="lazy"
-                  width={640}
-                  height={420}
-                  sizes="(max-width: 680px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                <Graphic
+                  seed={`aro-fq-cr-${a.id}`}
+                  tone={TONES[i % TONES.length]}
+                  style={{ width: '100%', height: '100%' }}
                 />
               </div>
               <div className={s.crBody}>

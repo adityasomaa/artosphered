@@ -1,67 +1,67 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import s from './styles.module.css'
 
 /**
- * MONOLITH cinematic loader.
+ * Cinematic Y2K loader — bulletproof self-contained pattern.
+ * Renders outside the page-transition wrapper so route changes never unmount it.
  * Sequence:
- *   0 ms  — black screen, letterbox bars visible
- *  200 ms — wordmark fades up
- *  800 ms — aperture iris closes (ring contracts inward)
- * 1400 ms — bars retract, screen fades out, onDone fires
+ *   0 ms  — film-title card visible, letterbox bars, chrome wordmark rises
+ *   500ms — amber lens-flare sweeps
+ *   700ms — aperture iris appears
+ *  1300ms — bars retract, iris expands out
+ *  1800ms — fade to transparent, pointer-events removed
+ *  2000ms — unmounted from DOM
  */
-export default function Loader({ onDone }) {
-  const [phase, setPhase] = useState(0) // 0=bars+word, 1=iris, 2=exit
-  const [visible, setVisible] = useState(true)
+export default function Loader() {
+  const [gone, setGone] = useState(false)
+  const [phase, setPhase] = useState(0) // 0=intro, 1=iris, 2=exit
 
   useEffect(() => {
-    // Respect prefers-reduced-motion
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced) { onDone(); return }
-
-    // Stop lenis during loader
-    if (window.__lenis) window.__lenis.stop()
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setGone(true)
+      return
+    }
+    try { if (window.__lenis) window.__lenis.stop() } catch (e) { /* noop */ }
 
     const t1 = setTimeout(() => setPhase(1), 700)
     const t2 = setTimeout(() => setPhase(2), 1300)
     const t3 = setTimeout(() => {
-      setVisible(false)
-    }, 1800)
-    const t4 = setTimeout(() => {
-      if (window.__lenis) window.__lenis.start()
-      onDone()
-    }, 2100)
+      setGone(true)
+      try { if (window.__lenis) window.__lenis.start() } catch (e) { /* noop */ }
+    }, 2000)
 
     return () => {
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4)
-      if (window.__lenis) window.__lenis.start()
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      try { if (window.__lenis) window.__lenis.start() } catch (e) { /* noop */ }
     }
-  }, [onDone])
+  }, [])
 
   return (
     <AnimatePresence>
-      {visible && (
+      {!gone && (
         <motion.div
+          key="ld"
           className={s.loaderRoot}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.45, ease: 'easeInOut' } }}
           aria-hidden="true"
         >
-          {/* Top letterbox bar */}
+          {/* Letterbox bars */}
           <motion.div
             className={s.loaderBarTop}
             animate={phase >= 2 ? { scaleY: 0 } : { scaleY: 1 }}
             transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
           />
-
-          {/* Bottom letterbox bar */}
           <motion.div
             className={s.loaderBarBot}
             animate={phase >= 2 ? { scaleY: 0 } : { scaleY: 1 }}
             transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
           />
 
-          {/* Aperture iris — SVG ring that contracts */}
+          {/* Aperture iris */}
           <motion.div
             className={s.loaderIrisWrap}
             initial={{ opacity: 0, scale: 0.6 }}
@@ -74,38 +74,47 @@ export default function Loader({ onDone }) {
             }
           >
             <svg viewBox="0 0 120 120" className={s.loaderIris} aria-hidden="true">
-              <circle cx="60" cy="60" r="54" stroke="#e7c89a" strokeWidth="1" fill="none" strokeDasharray="4 8" />
-              <circle cx="60" cy="60" r="42" stroke="#e7c89a" strokeWidth="0.5" fill="none" opacity="0.4" />
-              {/* Aperture blades */}
+              <circle cx="60" cy="60" r="54" stroke="#ffb35c" strokeWidth="1" fill="none" strokeDasharray="4 8" />
+              <circle cx="60" cy="60" r="42" stroke="#ff8a1e" strokeWidth="0.5" fill="none" opacity="0.5" />
               {[0, 60, 120, 180, 240, 300].map((deg) => (
                 <line
                   key={deg}
                   x1="60" y1="60"
                   x2={60 + 36 * Math.cos((deg * Math.PI) / 180)}
                   y2={60 + 36 * Math.sin((deg * Math.PI) / 180)}
-                  stroke="#e7c89a"
+                  stroke="#ffb35c"
                   strokeWidth="0.5"
-                  opacity="0.35"
+                  opacity="0.4"
                 />
               ))}
-              <circle cx="60" cy="60" r="4" fill="#e7c89a" opacity="0.7" />
+              <circle cx="60" cy="60" r="4" fill="#ff8a1e" opacity="0.85" />
+              {/* inner glow ring */}
+              <circle cx="60" cy="60" r="28" stroke="#ff5e1a" strokeWidth="0.4" fill="none" opacity="0.3" strokeDasharray="2 6" />
             </svg>
           </motion.div>
 
-          {/* Wordmark */}
+          {/* Amber lens-flare sweep */}
+          <div className={s.loaderFlare} />
+          <div className={s.loaderFlareDot} />
+
+          {/* Y2K sparkle star */}
+          <svg className={s.loaderSparkle} viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0 L13.5 9 L22 12 L13.5 15 L12 24 L10.5 15 L2 12 L10.5 9 Z" fill="#ffb35c" opacity="0.9" />
+          </svg>
+
+          {/* Chrome wordmark */}
           <motion.div
             className={s.loaderWordmark}
             initial={{ opacity: 0, y: 18 }}
             animate={
               phase === 0
-                ? { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.15 } }
+                ? { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.12 } }
                 : phase === 2
                 ? { opacity: 0, y: -12, transition: { duration: 0.35 } }
                 : { opacity: 1, y: 0 }
             }
           >
-            <span className={s.loaderWordArt}>art</span>
-            <span className={s.loaderWordSphere}>sphered</span>
+            ARTOSPHERED
           </motion.div>
 
           {/* Tagline */}

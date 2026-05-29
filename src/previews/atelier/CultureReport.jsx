@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ARTICLES, ARTICLE_CATS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 export default function CultureReport() {
@@ -22,13 +23,12 @@ export default function CultureReport() {
         </div>
 
         <div className={s.crLeadGrid} data-reveal>
-          <div className={s.crLeadImg}>
-            <img
-              src={`https://picsum.photos/seed/${lead.seed}/900/600`}
-              alt={lead.title}
-              width={900}
-              height={600}
-              loading="eager"
+          <div className={s.crLeadImg} style={{ position: 'relative' }}>
+            <Graphic
+              seed="aro-ed-cr-lead"
+              tone="amber"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+              label={lead.cat}
             />
           </div>
           <div className={s.crLeadBody}>
@@ -74,13 +74,12 @@ export default function CultureReport() {
               data-reveal
               data-reveal-delay={Math.min(i * 70, 280)}
             >
-              <div className={s.crCardImg}>
-                <img
-                  src={`https://picsum.photos/seed/${article.seed}/600/400`}
-                  alt={article.title}
-                  width={600}
-                  height={400}
-                  loading="lazy"
+              <div className={s.crCardImg} style={{ position: 'relative' }}>
+                <Graphic
+                  seed={`aro-ed-cr-${i + 1}`}
+                  tone={i % 3 === 0 ? 'amber' : i % 3 === 1 ? 'holo' : 'warm'}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                  label={article.cat}
                 />
               </div>
               <div className={s.crCardCat}>

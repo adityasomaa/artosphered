@@ -1,31 +1,36 @@
 /* ============================================================
    VOID / ARCHIVE — Brutalist Terminal Design System
+   PALETTE: Warm Amber-Phosphor Y2K (amber terminal on black)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 /* ---------- Custom Properties ---------- */
 .root {
-  --bg: #06080a;
-  --bg2: #0b0f12;
-  --bg3: #111820;
-  --surface: #0f1519;
-  --surface2: #161e25;
-  --border: rgba(124, 255, 155, 0.14);
-  --border-hard: rgba(124, 255, 155, 0.28);
-  --border-hairline: rgba(255, 255, 255, 0.07);
-  --green: #7cff9b;
-  --green-dim: rgba(124, 255, 155, 0.1);
-  --green-glow: rgba(124, 255, 155, 0.3);
-  --text: #e8edf2;
-  --text2: #8fa3b3;
-  --text3: #4a6070;
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
-  --nav-h: 56px;
-  --transition: 0.2s ease;
-  --max-w: 1280px;
-  --pad: 24px;
+  --bg:              #0a0a06;
+  --bg2:             #140d08;
+  --bg3:             #1c1108;
+  --surface:         #140d08;
+  --surface2:        #1e1309;
+  --border:          rgba(255, 224, 188, 0.13);
+  --border-hard:     rgba(255, 179, 92, 0.32);
+  --border-hairline: rgba(255, 224, 188, 0.13);
+  --amber:           #ff8a1e;
+  --gold:            #ffb35c;
+  --amber-dim:       rgba(255, 138, 30, 0.10);
+  --amber-glow:      rgba(255, 138, 30, 0.28);
+  --lime:            #b6ff3a;
+  --magenta:         #ff4da6;
+  --ink:             #f7f1e8;
+  --text:            #f7f1e8;
+  --text2:           #ccbdab;
+  --text3:           #7a6a58;
+  --font-display:    'Space Grotesk', sans-serif;
+  --font-mono:       ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+  --nav-h:           56px;
+  --transition:      0.2s ease;
+  --max-w:           1280px;
+  --pad:             24px;
 }
 
 /* ---------- Reveal Animations ---------- */
@@ -43,39 +48,68 @@
 }
 
 /* ============================================================
-   LOADER — Terminal boot sequence
+   LOADER — Amber phosphor Y2K terminal boot
    ============================================================ */
 .loader {
   position: fixed;
   inset: 0;
   background: var(--bg);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
   font-family: var(--font-mono);
+  overflow: hidden;
+}
+
+/* CRT scanlines on the loader overlay */
+.loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.22) 2px,
+    rgba(0, 0, 0, 0.22) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Amber vignette glow */
+.loader::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(255, 138, 30, 0.07) 0%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .loaderInner {
+  position: relative;
+  z-index: 2;
   width: min(600px, 92vw);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .loaderHeader {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-hard);
   padding-bottom: 12px;
 }
 
 .loaderBrand {
   font-family: var(--font-mono);
   font-size: 13px;
-  letter-spacing: 0.2em;
-  color: var(--green);
+  letter-spacing: 0.22em;
+  color: var(--amber);
+  text-shadow: 0 0 10px var(--amber-glow), 0 0 24px rgba(255, 138, 30, 0.18);
 }
 
 .loaderVersion {
@@ -88,7 +122,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 160px;
+  min-height: 168px;
 }
 
 .loaderLine {
@@ -101,22 +135,40 @@
 }
 
 .loaderPrompt {
-  color: var(--green);
+  color: var(--amber);
   flex-shrink: 0;
+  text-shadow: 0 0 8px var(--amber-glow);
 }
 
+/* Blinking block cursor */
 .loaderCursor {
   display: inline-block;
-  color: var(--green);
+  width: 9px;
+  height: 14px;
+  background: var(--amber);
+  vertical-align: text-bottom;
   animation: blink 0.8s step-end infinite;
+  box-shadow: 0 0 8px var(--amber-glow);
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  50%       { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .loaderCursor { animation: none; }
+}
+
+/* Loader sparkle */
+.loaderSparkle {
+  color: var(--gold);
+  margin-left: 8px;
+  font-size: 13px;
+}
+
+/* Status OK line (lime accent) */
+.loaderOk {
+  color: var(--lime);
 }
 
 .loaderProgressWrap {
@@ -127,14 +179,16 @@
 
 .loaderProgressTrack {
   height: 2px;
-  background: rgba(124, 255, 155, 0.12);
+  background: rgba(255, 138, 30, 0.14);
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .loaderProgressFill {
   height: 100%;
-  background: var(--green);
+  background: linear-gradient(90deg, var(--amber), var(--gold));
+  box-shadow: 0 0 8px rgba(255, 138, 30, 0.6);
 }
 
 .loaderProgressMeta {
@@ -146,7 +200,8 @@
 }
 
 .loaderProgressNum {
-  color: var(--green);
+  color: var(--gold);
+  text-shadow: 0 0 8px rgba(255, 179, 92, 0.5);
 }
 
 /* ============================================================
@@ -163,20 +218,20 @@
   overflow-x: hidden;
 }
 
-/* Subtle grid lines */
+/* Amber tinted grid lines */
 .layout::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(124, 255, 155, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(124, 255, 155, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(255, 138, 30, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 138, 30, 0.025) 1px, transparent 1px);
   background-size: 64px 64px;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Scanline */
+/* CRT scanline overlay */
 .layout::after {
   content: '';
   position: fixed;
@@ -185,8 +240,8 @@
     0deg,
     transparent,
     transparent 3px,
-    rgba(0, 0, 0, 0.06) 3px,
-    rgba(0, 0, 0, 0.06) 4px
+    rgba(0, 0, 0, 0.07) 3px,
+    rgba(0, 0, 0, 0.07) 4px
   );
   pointer-events: none;
   z-index: 0;
@@ -206,7 +261,7 @@
   top: 0;
   height: var(--nav-h);
   z-index: 100;
-  background: rgba(6, 8, 10, 0.94);
+  background: rgba(10, 10, 6, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-hairline);
 }
@@ -236,7 +291,8 @@
 }
 
 .navLogoMark {
-  color: var(--green);
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255, 138, 30, 0.4);
 }
 
 .navLogoSub {
@@ -263,8 +319,8 @@
   transition: color var(--transition), background var(--transition);
 }
 .navLink:first-child { border-left: 1px solid var(--border-hairline); }
-.navLink:hover { color: var(--green); background: var(--green-dim); }
-.navLinkActive { color: var(--green); background: var(--green-dim); }
+.navLink:hover { color: var(--amber); background: var(--amber-dim); }
+.navLinkActive { color: var(--amber); background: var(--amber-dim); }
 
 .navSpacer { flex: 1; }
 
@@ -298,7 +354,7 @@
   transition: border-color var(--transition);
   flex-shrink: 0;
 }
-.hamburger:hover { border-color: var(--green); }
+.hamburger:hover { border-color: var(--amber); }
 
 .hamburgerLine {
   display: block;
@@ -310,7 +366,7 @@
 }
 .hamburgerOpen .hamburgerLine:nth-child(1) {
   transform: translateY(6px) rotate(45deg);
-  background: var(--green);
+  background: var(--amber);
 }
 .hamburgerOpen .hamburgerLine:nth-child(2) {
   opacity: 0;
@@ -318,7 +374,7 @@
 }
 .hamburgerOpen .hamburgerLine:nth-child(3) {
   transform: translateY(-6px) rotate(-45deg);
-  background: var(--green);
+  background: var(--amber);
 }
 
 /* Mobile overlay */
@@ -362,7 +418,7 @@
   transition: color var(--transition);
 }
 .mobileNavLink:hover { color: var(--text); }
-.mobileNavLinkActive { color: var(--green); }
+.mobileNavLinkActive { color: var(--amber); }
 
 .mobileNavIdx {
   color: var(--text3);
@@ -385,7 +441,7 @@
 
 @media (max-width: 860px) {
   .navLinks { display: none; }
-  .navBack { display: none; }
+  .navBack  { display: none; }
   .hamburger { display: flex; }
 }
 
@@ -420,7 +476,8 @@
   font-family: var(--font-mono);
   font-size: 14px;
   letter-spacing: 0.2em;
-  color: var(--green);
+  color: var(--amber);
+  text-shadow: 0 0 10px rgba(255, 138, 30, 0.3);
 }
 
 .footerTagline {
@@ -474,7 +531,7 @@
   letter-spacing: 0.05em;
   transition: color var(--transition);
 }
-.footerLink:hover { color: var(--green); }
+.footerLink:hover { color: var(--amber); }
 
 .footerBottom {
   max-width: var(--max-w);
@@ -489,7 +546,7 @@
 }
 
 .footerCopy { }
-.footerBottomTag { color: var(--green); }
+.footerBottomTag { color: var(--amber); }
 
 @media (max-width: 768px) {
   .footerInner { grid-template-columns: 1fr; gap: 32px; }
@@ -521,19 +578,20 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 12px 24px;
-  border: 1px solid var(--green);
-  background: var(--green-dim);
-  color: var(--green);
+  border: 1px solid var(--amber);
+  background: var(--amber-dim);
+  color: var(--amber);
   cursor: pointer;
-  transition: background var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 .btnPrimary:hover {
-  background: var(--green);
-  color: #06080a;
+  background: var(--amber);
+  color: #0a0a06;
+  box-shadow: 0 0 16px rgba(255, 138, 30, 0.35);
 }
 
 .btnOutline {
@@ -586,7 +644,7 @@
   border-bottom: 1px solid var(--border-hairline);
   transition: background var(--transition);
 }
-.indexRow:hover { background: rgba(124, 255, 155, 0.03); }
+.indexRow:hover { background: rgba(255, 138, 30, 0.04); }
 
 .indexRow td {
   padding: 14px 12px 14px 0;
@@ -647,8 +705,8 @@
   font-size: 9px;
   letter-spacing: 0.1em;
   padding: 3px 7px;
-  border: 1px solid rgba(124, 255, 155, 0.4);
-  color: var(--green);
+  border: 1px solid rgba(182, 255, 58, 0.45);
+  color: var(--lime);
   white-space: nowrap;
 }
 .statusCovered {
@@ -662,16 +720,34 @@
   white-space: nowrap;
 }
 
-/* Thumbnail */
-.thumbImg {
+/* Thumbnail wrapper — used in place of <img> */
+.thumbWrap {
   display: block;
   width: 64px;
   height: 64px;
-  object-fit: cover;
-  filter: grayscale(100%) brightness(0.7);
-  transition: filter var(--transition);
+  overflow: hidden;
+  flex-shrink: 0;
 }
-.indexRow:hover .thumbImg { filter: grayscale(60%) brightness(0.85); }
+
+/* Event thumbnail wrapper */
+.eventThumbWrap {
+  display: block;
+  width: 120px;
+  height: 80px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Service image wrapper */
+.serviceImgWrap {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  border: 1px solid var(--border-hairline);
+  transition: border-color var(--transition);
+}
+.serviceBlock:hover .serviceImgWrap { border-color: var(--border); }
 
 /* Empty state */
 .emptyState {
@@ -724,9 +800,11 @@
   color: var(--text3);
 }
 
+/* Chrome/holographic accent on main headline — Y2K */
 .heroLine2 {
   display: block;
-  color: var(--green);
+  color: var(--amber);
+  text-shadow: 0 0 32px rgba(255, 138, 30, 0.35);
 }
 
 .heroRule {
@@ -777,8 +855,9 @@
   font-family: var(--font-mono);
   font-size: clamp(22px, 3vw, 32px);
   font-weight: 400;
-  color: var(--green);
+  color: var(--amber);
   letter-spacing: -0.02em;
+  text-shadow: 0 0 16px rgba(255, 138, 30, 0.3);
 }
 
 .statsBarLabel {
@@ -875,7 +954,7 @@
   text-decoration: none;
   transition: color var(--transition);
 }
-.indexMore:hover { color: var(--green); }
+.indexMore:hover { color: var(--amber); }
 
 /* Contact line */
 .contactLine {
@@ -979,8 +1058,8 @@
   transition: color var(--transition), background var(--transition);
 }
 .filterBtn:last-child { border-right: none; }
-.filterBtn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.filterBtnActive { color: var(--green); background: var(--green-dim); }
+.filterBtn:hover { color: var(--text); background: rgba(255, 224, 188, 0.03); }
+.filterBtnActive { color: var(--amber); background: var(--amber-dim); }
 
 /* ============================================================
    CULTURE REPORT
@@ -1033,7 +1112,7 @@
   align-items: start;
   transition: background var(--transition);
 }
-.eventEntry:hover { background: rgba(124, 255, 155, 0.02); }
+.eventEntry:hover { background: rgba(255, 138, 30, 0.025); }
 
 .eventEntryLeft {
   display: flex;
@@ -1113,23 +1192,12 @@
   gap: 10px;
 }
 
-.eventThumb {
-  display: block;
-  width: 120px;
-  height: 80px;
-  object-fit: cover;
-  filter: grayscale(100%) brightness(0.65);
-  transition: filter var(--transition);
-}
-.eventEntry:hover .eventThumb { filter: grayscale(60%) brightness(0.8); }
-
 @media (max-width: 768px) {
   .eventEntry {
     grid-template-columns: 1fr;
     gap: 12px;
   }
   .eventEntryRight {
-    align-items: flex-start;
     flex-direction: row;
     align-items: center;
   }
@@ -1208,24 +1276,13 @@
 }
 
 .serviceItemArrow {
-  color: var(--green);
+  color: var(--amber);
   font-size: 11px;
 }
 
 .serviceBlockRight {
   padding-top: 4px;
 }
-
-.serviceImg {
-  display: block;
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  filter: grayscale(100%) brightness(0.6);
-  border: 1px solid var(--border-hairline);
-  transition: filter var(--transition);
-}
-.serviceBlock:hover .serviceImg { filter: grayscale(60%) brightness(0.75); }
 
 .servicesCta {
   background: var(--surface);
@@ -1272,14 +1329,12 @@
   .contactLayout { grid-template-columns: 1fr; }
 }
 
-/* Contact form container */
 .contactForm {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-/* Terminal form */
 .terminalForm {
   display: flex;
   flex-direction: column;
@@ -1312,7 +1367,7 @@
   border: 1px solid var(--border-hairline);
   padding: 12px 14px;
   outline: none;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition);
   width: 100%;
   box-sizing: border-box;
   resize: vertical;
@@ -1322,13 +1377,16 @@
 .formSelect option { background: var(--bg); }
 .formInput:focus,
 .formSelect:focus,
-.formTextarea:focus { border-color: var(--green); }
-.formInputError { border-color: rgba(255, 80, 80, 0.6); }
+.formTextarea:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px rgba(255, 138, 30, 0.15);
+}
+.formInputError { border-color: rgba(255, 77, 166, 0.6); }
 
 .formError {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: rgba(255, 100, 100, 0.9);
+  color: var(--magenta);
   letter-spacing: 0.05em;
 }
 
@@ -1336,7 +1394,7 @@
 .successState {
   background: var(--surface);
   border: 1px solid var(--border-hairline);
-  border-left: 2px solid var(--green);
+  border-left: 2px solid var(--lime);
   padding: 40px;
   display: flex;
   flex-direction: column;
@@ -1352,7 +1410,7 @@
 .successIcon {
   font-family: var(--font-mono);
   font-size: 16px;
-  color: var(--green);
+  color: var(--lime);
 }
 
 .successText {
@@ -1391,7 +1449,7 @@
   text-decoration: none;
   transition: color var(--transition);
 }
-.contactInfoLink:hover { color: var(--green); }
+.contactInfoLink:hover { color: var(--amber); }
 
 .cityList {
   display: flex;

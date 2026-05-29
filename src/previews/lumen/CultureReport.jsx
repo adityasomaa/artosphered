@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ARTICLES, ARTICLE_CATS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 export default function CultureReport() {
@@ -67,7 +68,7 @@ export default function CultureReport() {
       {/* ARTICLE MASONRY */}
       <div className={s.masonry}>
         {filtered.map((a, i) => {
-          const h = i % 3 === 0 ? 1000 : i % 3 === 1 ? 700 : 860
+          const aspectPad = i % 3 === 0 ? '125%' : i % 3 === 1 ? '87%' : '107%'
           return (
             <div
               key={a.id}
@@ -78,14 +79,13 @@ export default function CultureReport() {
               aria-label={`Open article: ${a.title}`}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openLb(i) }}
             >
-              <img
-                src={`https://picsum.photos/seed/${a.seed}/800/${h}`}
-                alt={a.title}
-                loading="lazy"
-                width="800"
-                height={h}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
+              <div className={s.mCardGraphic} style={{ paddingBottom: aspectPad }}>
+                <Graphic
+                  seed={`aro-mo-cr-${a.seed}`}
+                  tone="warm"
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                />
+              </div>
               <div className={s.mMeta}>
                 <span className={s.cat}>{a.cat} &mdash; {a.city}</span>
                 <div className={s.ttl}>{a.title}</div>
@@ -130,12 +130,17 @@ export default function CultureReport() {
             &#8594;
           </button>
 
-          <img
-            className={s.lbImg}
-            src={`https://picsum.photos/seed/${lbArticle.seed}/1400/900`}
-            alt={lbArticle.title}
+          <div
+            className={s.lbGraphicWrap}
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <Graphic
+              seed={`aro-mo-lb-${lbArticle.seed}`}
+              tone="warm"
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
+
           <div className={s.lbCap} onClick={(e) => e.stopPropagation()}>
             <div className={s.cat}>{lbArticle.cat} &mdash; {lbArticle.city} &mdash; {lbArticle.date}</div>
             <div className={s.ttl}>{lbArticle.title}</div>

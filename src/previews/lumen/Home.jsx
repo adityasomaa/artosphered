@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { BASE } from './data'
 import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const PILLARS = [
@@ -29,13 +30,13 @@ export default function Home() {
     <>
       {/* HERO */}
       <section className={s.hero}>
-        <img
-          className={s.heroImg}
-          src="https://picsum.photos/seed/aro-hero-monolith/1920/1200"
-          alt=""
-          aria-hidden="true"
-          sizes="100vw"
-        />
+        <div className={s.heroGraphicWrap}>
+          <Graphic
+            seed="aro-mo-hero"
+            tone="warm"
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
         <div className={s.heroVignette} />
         <div className={s.heroInner}>
           <p className={s.heroEyebrow}>A Cultural Archive</p>
@@ -78,7 +79,7 @@ export default function Home() {
               becomes a permanent record.
             </p>
             <p style={{ marginTop: 20, fontSize: 'clamp(14px, 1.5vw, 16px)', color: 'var(--muted)', fontFamily: 'var(--sans)', fontWeight: 300 }}>
-              Est. {BRAND.est} &mdash; {BRAND.cities.join(' &middot; ')}
+              Est. {BRAND.est} &mdash; {BRAND.cities.join(' · ')}
             </p>
           </div>
         </div>
@@ -117,13 +118,10 @@ export default function Home() {
               data-reveal-delay={String(i * 100)}
             >
               <div className={s.articleImgWrap}>
-                <img
-                  src={`https://picsum.photos/seed/${a.seed}/900/600`}
-                  alt={a.title}
-                  loading="lazy"
-                  width="900"
-                  height="600"
-                  sizes="(max-width: 860px) 100vw, 33vw"
+                <Graphic
+                  seed={`aro-mo-${a.seed}`}
+                  tone="warm"
+                  className={s.articleGraphic}
                 />
               </div>
               <div className={s.articleMeta}>
@@ -160,13 +158,11 @@ export default function Home() {
               data-reveal-delay={String(i * 80)}
             >
               <div className={s.eventHomeImg}>
-                <img
-                  src={`https://picsum.photos/seed/${ev.seed}/600/400`}
-                  alt={ev.name}
-                  loading="lazy"
-                  width="600"
-                  height="400"
-                  sizes="(max-width: 860px) 100vw, 300px"
+                <Graphic
+                  seed={`aro-mo-${ev.seed}`}
+                  tone="amber"
+                  className={s.eventGraphic}
+                  style={{ width: '100%', height: '100%' }}
                 />
               </div>
               <div className={s.eventHomeInfo}>
@@ -204,13 +200,9 @@ export default function Home() {
 
       {/* CONTACT CTA */}
       <section className={s.cta}>
-        <img
-          className={s.ctaBg}
-          src="https://picsum.photos/seed/aro-cta-monolith/1920/900"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
+        <div className={s.ctaBgGraphic}>
+          <Graphic seed="aro-mo-cta-home" tone="warm" style={{ width: '100%', height: '100%' }} />
+        </div>
         <p className={s.eyebrow} data-reveal style={{ justifyContent: 'center' }}>
           Collaborate
         </p>

@@ -6,9 +6,9 @@ const BASE = '/p/prisma'
 
 const ACCENT_COLORS = [
   'var(--p-accent)',
-  'var(--p-violet)',
   'var(--p-magenta)',
-  'var(--p-teal)',
+  'var(--p-cyan)',
+  'var(--p-lime)',
 ]
 
 export default function Services() {
@@ -17,7 +17,7 @@ export default function Services() {
       <div className={s.container}>
         {/* Header */}
         <div style={{ marginBottom: 64 }} data-reveal>
-          <div className={s.eyebrow}>Collaborate</div>
+          <div className={s.eyebrow}>Collaborate &#10022;</div>
           <h1 className={s.h2}>Creative Services</h1>
           <p className={s.lead} style={{ marginTop: 14 }}>
             ARTOSPHERED works with brands, institutions and individuals who want to engage with culture authentically. We bring editorial intelligence, creative direction and a genuine community.
@@ -65,7 +65,7 @@ export default function Services() {
         {/* CTA */}
         <div className={s.newsletter} style={{ marginTop: 80 }} data-reveal>
           <div>
-            <div className={s.eyebrow}>Ready to start?</div>
+            <div className={s.eyebrow}>Ready to start? &#10022;</div>
             <h2 className={s.h2} style={{ marginTop: 8 }}>
               Let&apos;s make something
               <br />

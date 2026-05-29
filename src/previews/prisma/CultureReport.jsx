@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ARTICLES, ARTICLE_CATS } from '../../shared/content.js'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 export default function CultureReport() {
@@ -10,7 +11,6 @@ export default function CultureReport() {
   const filtered =
     activeCat === 'All' ? ARTICLES : ARTICLES.filter((a) => a.cat === activeCat)
 
-  /* Modal close helpers */
   const closeModal = useCallback(() => setSelected(null), [])
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function CultureReport() {
       <div className={s.container}>
         {/* Header */}
         <div style={{ marginBottom: 52 }} data-reveal>
-          <div className={s.eyebrow}>Editorial</div>
+          <div className={s.eyebrow}>Editorial &#10022;</div>
           <h1 className={s.h2}>Culture Report</h1>
           <p className={s.lead} style={{ marginTop: 14 }}>
             Field notes, essays and city reports from the movements shaping art, fashion and contemporary culture.
@@ -60,16 +60,13 @@ export default function CultureReport() {
               data-reveal
               data-reveal-delay={i * 80}
               onClick={() => setSelected(art)}
-              aria-label={`Read: ${art.title}`}
+              aria-label={'Read: ' + art.title}
             >
               <div className={s.cardMedia}>
-                <img
-                  src={`https://picsum.photos/seed/${art.seed}/600/450`}
-                  alt={art.title}
-                  loading="lazy"
-                  width={600}
-                  height={450}
-                  sizes="(max-width: 600px) 100vw, 33vw"
+                <Graphic
+                  seed={'aro-cr-' + art.seed}
+                  tone="holo"
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                 />
                 <span className={`${s.badge} ${s.badgeUpcoming}`}>{art.cat}</span>
               </div>
@@ -112,16 +109,22 @@ export default function CultureReport() {
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className={s.modalMedia}>
-                <img
-                  src={`https://picsum.photos/seed/${selected.seed}/600/500`}
-                  alt={selected.title}
-                  loading="lazy"
-                  width={600}
-                  height={500}
+                <Graphic
+                  seed={'aro-cr-modal-' + selected.seed}
+                  tone="amber"
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                 />
               </div>
               <div className={s.modalBody}>
-                <span className={`${s.badge}`} style={{ position: 'static', display: 'inline-flex', color: 'var(--p-accent)', borderColor: 'rgba(155,231,255,0.4)' }}>
+                <span
+                  className={s.badge}
+                  style={{
+                    position: 'static',
+                    display: 'inline-flex',
+                    color: 'var(--p-accent)',
+                    borderColor: 'rgba(255,174,61,0.4)',
+                  }}
+                >
                   {selected.cat}
                 </span>
                 <h2 className={s.h3} style={{ marginTop: 8 }}>{selected.title}</h2>

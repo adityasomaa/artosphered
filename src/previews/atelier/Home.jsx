@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content'
 import { BASE } from './data'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const MARQUEE_ITEMS = [
@@ -48,12 +49,11 @@ export default function Home() {
           </div>
         </div>
         <div className={s.aroHeroRight}>
-          <img
-            src="https://picsum.photos/seed/aro-home-hero/900/1100"
-            alt="ARTOSPHERED — cultural archive editorial"
-            width={900}
-            height={1100}
-            loading="eager"
+          <Graphic
+            seed="aro-ed-hero-01"
+            tone="amber"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+            label="ARTOSPHERED — Cultural Archive"
           />
           <div className={s.aroHeroCaption}>
             ARTOSPHERED &nbsp;&#183;&nbsp; {BRAND.tagline}
@@ -99,12 +99,11 @@ export default function Home() {
               data-reveal-delay={i * 80}
             >
               <div className={`${s.aroArticleCardImg}${i === 0 ? ` ${s.tall}` : ''}`}>
-                <img
-                  src={`https://picsum.photos/seed/${article.seed}/${i === 0 ? '700/900' : '600/400'}`}
-                  alt={article.title}
-                  width={i === 0 ? 700 : 600}
-                  height={i === 0 ? 900 : 400}
-                  loading="lazy"
+                <Graphic
+                  seed={`aro-ed-art-${i + 1}`}
+                  tone={i === 0 ? 'amber' : i === 1 ? 'holo' : 'warm'}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                  label={article.cat}
                 />
               </div>
               <p className={s.aroArticleCat}>

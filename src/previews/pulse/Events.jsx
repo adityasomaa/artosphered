@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { EVENTS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const STATUSES = ['All', 'Upcoming', 'Covered']
+const TONES    = ['holo', 'warm', 'amber', 'holo', 'warm', 'amber']
 
 export default function Events() {
   const [status, setStatus] = useState('All')
@@ -44,13 +46,10 @@ export default function Events() {
               data-reveal-delay={i * 70}
             >
               <div className={s.evFullImg}>
-                <img
-                  src={`https://picsum.photos/seed/${ev.seed}/640/400`}
-                  alt={ev.name}
-                  loading="lazy"
-                  width={640}
-                  height={400}
-                  sizes="(max-width: 680px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                <Graphic
+                  seed={`aro-fq-ev-${ev.id}`}
+                  tone={TONES[i % TONES.length]}
+                  style={{ width: '100%', height: '100%' }}
                 />
                 <span className={ev.status === 'Covered' ? `${s.evBadge} ${s.evBadgeCovered}` : s.evBadge}>
                   {ev.status}

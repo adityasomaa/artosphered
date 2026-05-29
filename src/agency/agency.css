@@ -7,8 +7,8 @@
   position: relative;
   min-height: 100vh;
   background:
-    radial-gradient(1200px 800px at 80% -10%, rgba(124, 92, 255, 0.18), transparent 60%),
-    radial-gradient(900px 700px at -10% 20%, rgba(0, 229, 192, 0.1), transparent 55%),
+    radial-gradient(1200px 800px at 80% -10%, rgba(255, 138, 30, 0.20), transparent 60%),
+    radial-gradient(900px 700px at -10% 20%, rgba(255, 94, 26, 0.12), transparent 55%),
     var(--bg);
 }
 
@@ -193,7 +193,7 @@
   transition: transform 0.25s var(--ease), box-shadow 0.3s, background 0.3s;
 }
 .ag-btn-primary {
-  background: linear-gradient(120deg, var(--brand), #5b3ce0);
+  background: linear-gradient(120deg, var(--brand), #ff5e1a);
   color: #fff;
   box-shadow: 0 14px 40px rgba(var(--glow), 0.35);
 }
@@ -260,7 +260,7 @@
 .ag-blob-1 {
   width: 480px;
   height: 480px;
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.7), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 138, 30, 0.75), transparent 70%);
   top: -120px;
   right: -80px;
   animation: ag-float 14s ease-in-out infinite;
@@ -268,7 +268,7 @@
 .ag-blob-2 {
   width: 380px;
   height: 380px;
-  background: radial-gradient(circle, rgba(0, 229, 192, 0.5), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 94, 26, 0.45), transparent 70%);
   bottom: -60px;
   left: -60px;
   animation: ag-float 18s ease-in-out infinite reverse;
@@ -480,7 +480,7 @@
   display: grid;
   place-items: center;
   font-size: 1.4rem;
-  background: linear-gradient(135deg, rgba(124, 92, 255, 0.25), rgba(0, 229, 192, 0.15));
+  background: linear-gradient(135deg, rgba(255, 138, 30, 0.28), rgba(255, 179, 92, 0.18));
   border: 1px solid var(--line);
   margin-bottom: 1.3rem;
 }
@@ -538,8 +538,8 @@
   flex-direction: column;
 }
 .ag-price.featured {
-  border-color: rgba(124, 92, 255, 0.5);
-  background: linear-gradient(180deg, rgba(124, 92, 255, 0.12), rgba(255, 255, 255, 0.02));
+  border-color: rgba(255, 138, 30, 0.55);
+  background: linear-gradient(180deg, rgba(255, 138, 30, 0.14), rgba(255, 255, 255, 0.02));
   box-shadow: 0 24px 70px rgba(var(--glow), 0.2);
 }
 .ag-price-name {
@@ -579,7 +579,7 @@
   padding: clamp(2.5rem, 7vw, 5rem);
   text-align: center;
   background:
-    radial-gradient(600px 300px at 50% 0%, rgba(124, 92, 255, 0.25), transparent 70%),
+    radial-gradient(600px 300px at 50% 0%, rgba(255, 138, 30, 0.28), transparent 70%),
     var(--surface);
   position: relative;
   overflow: hidden;
@@ -613,7 +613,7 @@
 .ag-field select:focus {
   outline: none;
   border-color: var(--brand);
-  background: rgba(124, 92, 255, 0.06);
+  background: rgba(255, 138, 30, 0.08);
 }
 .ag-row2 {
   display: grid;
@@ -623,8 +623,8 @@
 .ag-sent {
   padding: 1rem 1.2rem;
   border-radius: 12px;
-  border: 1px solid rgba(0, 229, 192, 0.4);
-  background: rgba(0, 229, 192, 0.08);
+  border: 1px solid rgba(255, 179, 92, 0.5);
+  background: rgba(255, 179, 92, 0.10);
   color: var(--brand-2);
   font-weight: 500;
 }

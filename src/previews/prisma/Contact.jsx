@@ -8,7 +8,7 @@ export default function Contact() {
       <div className={s.container}>
         {/* Header */}
         <div style={{ marginBottom: 52 }} data-reveal>
-          <div className={s.eyebrow}>Say hello</div>
+          <div className={s.eyebrow}>Say hello &#10022;</div>
           <h1 className={s.h2}>Get in Touch</h1>
           <p className={s.lead} style={{ marginTop: 14 }}>
             {CONTACT.blurb}
@@ -26,7 +26,7 @@ export default function Contact() {
                 Email us
               </h3>
               <a
-                href={`mailto:${BRAND.email}`}
+                href={'mailto:' + BRAND.email}
                 style={{ color: 'var(--p-accent)', fontSize: '0.95rem', display: 'block' }}
               >
                 {BRAND.email}
@@ -44,7 +44,7 @@ export default function Contact() {
                 href={BRAND.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: 'var(--p-violet)', fontSize: '0.95rem', display: 'block' }}
+                style={{ color: 'var(--p-magenta)', fontSize: '0.95rem', display: 'block' }}
               >
                 {BRAND.instagram}
               </a>
@@ -66,8 +66,8 @@ export default function Contact() {
                       color: 'var(--p-muted)',
                       padding: '5px 12px',
                       borderRadius: 100,
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,245,235,0.05)',
+                      border: '1px solid rgba(255,224,188,0.13)',
                     }}
                   >
                     {city}
@@ -107,7 +107,7 @@ function EnquiryForm() {
         <div className={s.success}>
           <span style={{ fontSize: '1.5rem' }}>&#10003;</span>
           <div>
-            <div style={{ fontWeight: 700 }}>Message received</div>
+            <div style={{ fontWeight: 700 }}>Message received &#10022;</div>
             <div style={{ fontSize: '0.88rem', marginTop: 4, opacity: 0.85 }}>
               We read everything and will reply within one business day.
             </div>

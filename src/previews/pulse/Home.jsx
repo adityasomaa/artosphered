@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const BASE = '/p/pulse'
 
-/* marquee content: pillars + cities interleaved */
+/* marquee: pillars + cities interleaved */
 const MARQUEE_ITEMS = [
   ...BRAND.pillars,
   ...BRAND.cities,
@@ -13,7 +14,7 @@ const MARQUEE_ITEMS = [
 ]
 
 const FEATURED_ARTICLES = ARTICLES.slice(0, 3)
-const FEATURED_EVENTS = EVENTS.slice(0, 3)
+const FEATURED_EVENTS   = EVENTS.slice(0, 3)
 
 export default function Home() {
   return (
@@ -64,13 +65,10 @@ export default function Home() {
                 data-reveal-delay={i * 80}
               >
                 <div className={s.articleImg}>
-                  <img
-                    src={`https://picsum.photos/seed/${a.seed}/600/400`}
-                    alt={a.title}
-                    loading="lazy"
-                    width={600}
-                    height={400}
-                    sizes="(max-width: 860px) 100vw, 33vw"
+                  <Graphic
+                    seed={`aro-fq-home-a${i + 1}`}
+                    tone={i === 1 ? 'holo' : 'warm'}
+                    style={{ width: '100%', height: '100%' }}
                   />
                 </div>
                 <div className={s.articleBody}>
@@ -133,7 +131,7 @@ export default function Home() {
             <div className={s.eyebrow}>Event Coverage</div>
             <h2 className={s.sectionTitle}>On the Ground</h2>
             <p className={s.sectionSub}>
-              We document shows, launches, and happenings across cities — before, during and after.
+              We document shows, launches, and happenings across cities &mdash; before, during and after.
             </p>
           </div>
           <div className={s.eventGrid}>
@@ -146,13 +144,10 @@ export default function Home() {
                 data-reveal-delay={i * 80}
               >
                 <div className={s.eventImg}>
-                  <img
-                    src={`https://picsum.photos/seed/${ev.seed}/600/360`}
-                    alt={ev.name}
-                    loading="lazy"
-                    width={600}
-                    height={360}
-                    sizes="(max-width: 860px) 100vw, 33vw"
+                  <Graphic
+                    seed={`aro-fq-home-ev${i + 1}`}
+                    tone={i === 0 ? 'amber' : i === 1 ? 'holo' : 'warm'}
+                    style={{ width: '100%', height: '100%' }}
                   />
                   <span className={ev.status === 'Covered' ? `${s.evBadge} ${s.evBadgeCovered}` : s.evBadge}>
                     {ev.status}

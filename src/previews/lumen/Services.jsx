@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { BASE } from './data'
 import { SERVICES } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 export default function Services() {
@@ -21,18 +22,16 @@ export default function Services() {
         </p>
       </section>
 
-      {/* SERVICES — cinematic full sections */}
+      {/* SERVICES cinematic full sections */}
       {SERVICES.map((svc, i) => (
         <section key={svc.id} className={s.svcSection} data-alt={i % 2 === 1}>
           <div className={s.svcSectionInner}>
             <div className={s.svcSectionImg}>
-              <img
-                src={`https://picsum.photos/seed/aro-svc-${i + 1}/1000/800`}
-                alt={svc.title}
-                loading="lazy"
-                width="1000"
-                height="800"
-                sizes="(max-width: 860px) 100vw, 50vw"
+              <Graphic
+                seed={`aro-mo-svc-${i + 1}`}
+                tone={i % 2 === 0 ? 'warm' : 'amber'}
+                className={s.svcGraphic}
+                style={{ width: '100%', height: '100%' }}
               />
             </div>
             <div className={s.svcSectionContent} data-reveal>
@@ -54,13 +53,9 @@ export default function Services() {
 
       {/* CTA */}
       <section className={s.cta}>
-        <img
-          className={s.ctaBg}
-          src="https://picsum.photos/seed/aro-svc-cta/1920/900"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
+        <div className={s.ctaBgGraphic}>
+          <Graphic seed="aro-mo-svc-cta" tone="warm" style={{ width: '100%', height: '100%' }} />
+        </div>
         <p className={s.eyebrow} data-reveal style={{ justifyContent: 'center' }}>
           Ready to collaborate?
         </p>

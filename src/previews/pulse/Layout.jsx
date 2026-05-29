@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useReveal } from '../../shared/useReveal'
@@ -7,26 +7,35 @@ import s from './styles.module.css'
 
 const BASE = '/p/pulse'
 
-/* ─── FREQUENCY LOADER ─── */
-const BAR_COUNT = 12
+/* ─── SPARKLE POSITIONS — stable, not random ─── */
+const SPARKS = [
+  { left: '12%',  top: '18%', delay: '0.0s', size: 8 },
+  { left: '78%',  top: '11%', delay: '0.6s', size: 6 },
+  { left: '55%',  top: '72%', delay: '1.1s', size: 7 },
+  { left: '30%',  top: '60%', delay: '0.4s', size: 5 },
+  { left: '88%',  top: '55%', delay: '1.5s', size: 9 },
+  { left: '6%',   top: '80%', delay: '0.9s', size: 6 },
+  { left: '65%',  top: '30%', delay: '0.2s', size: 7 },
+  { left: '42%',  top: '45%', delay: '1.3s', size: 5 },
+]
 
-function FrequencyLoader({ onDone }) {
+const BAR_COUNT = 14
+
+/* ─── Y2K KINETIC LOADER ─── */
+function Loader() {
+  const [gone, setGone] = useState(false)
   const [count, setCount] = useState(0)
-  const [done, setDone] = useState(false)
   const rafRef = useRef(null)
   const startRef = useRef(null)
 
-  /* respect prefers-reduced-motion */
-  const reduced = typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
   useEffect(() => {
-    if (reduced) { onDone(); return }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setGone(true)
+      return
+    }
+    try { window.__lenis && window.__lenis.stop() } catch (e) { /* ignore */ }
 
-    /* stop lenis during loader */
-    if (window.__lenis) window.__lenis.stop()
-
-    const DURATION = 1500
+    const DURATION = 1800
     function tick(ts) {
       if (!startRef.current) startRef.current = ts
       const elapsed = ts - startRef.current
@@ -35,30 +44,52 @@ function FrequencyLoader({ onDone }) {
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(tick)
       } else {
-        setDone(true)
         setTimeout(() => {
-          if (window.__lenis) window.__lenis.start()
-          onDone()
+          setGone(true)
+          try { window.__lenis && window.__lenis.start() } catch (e) { /* ignore */ }
         }, 420)
       }
     }
     rafRef.current = requestAnimationFrame(tick)
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      try { window.__lenis && window.__lenis.start() } catch (e) { /* ignore */ }
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AnimatePresence>
-      {!done && (
+      {!gone && (
         <motion.div
-          className={s.loader}
+          key="ld"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.04 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'grid', placeItems: 'center' }}
+          className={s.loader}
         >
-          {/* glitch scanline */}
+          {/* scan lines */}
           <div className={s.loaderScan} aria-hidden="true" />
+          {/* Y2K grid */}
+          <div className={s.loaderGrid} aria-hidden="true" />
+
+          {/* floating sparkles */}
+          <div className={s.loaderSparkles} aria-hidden="true">
+            {SPARKS.map((sp, i) => (
+              <span
+                key={i}
+                className={s.spark}
+                style={{
+                  left: sp.left,
+                  top: sp.top,
+                  width: sp.size,
+                  height: sp.size,
+                  animationDelay: sp.delay,
+                  background: i % 2 === 0 ? 'var(--amber)' : 'var(--hot)',
+                }}
+              />
+            ))}
+          </div>
 
           {/* equalizer bars */}
           <div className={s.loaderBars} aria-hidden="true">
@@ -66,20 +97,25 @@ function FrequencyLoader({ onDone }) {
               <div
                 key={i}
                 className={s.loaderBar}
-                style={{ animationDelay: `${i * 0.06}s` }}
+                style={{ animationDelay: `${i * 0.055}s` }}
               />
             ))}
           </div>
 
-          {/* wordmark */}
-          <div className={s.loaderWordmark}>
-            <span className={s.loaderArt}>art</span>
-            <span className={s.loaderSphered}>sphered</span>
+          {/* chrome / holographic wordmark */}
+          <div className={s.loaderWordmark} aria-label="ARTOSPHERED">
+            <span className={s.loaderArt}>ART</span>
+            <span className={s.loaderSphered}>OSPHERED</span>
           </div>
+
+          {/* holographic accent bar */}
+          <div className={s.loaderHoloBar} aria-hidden="true" />
 
           {/* glitchy counter */}
           <div className={s.loaderCounter} aria-label={`Loading ${count} percent`}>
-            <span className={s.loaderCountGhost} aria-hidden="true">{String(count).padStart(3, '0')}</span>
+            <span className={s.loaderCountGhost} aria-hidden="true">
+              {String(count).padStart(3, '0')}
+            </span>
             <span>{String(count).padStart(3, '0')}</span>
             <span className={s.loaderPct}>%</span>
           </div>
@@ -97,7 +133,6 @@ const NAV_ITEMS = NAV.map((n) => ({ to: n.path, label: n.label, end: n.end }))
 export default function Layout() {
   useReveal()
   const [open, setOpen] = useState(false)
-  const [showLoader, setShowLoader] = useState(true)
   const { pathname } = useLocation()
 
   useEffect(() => { setOpen(false) }, [pathname])
@@ -107,10 +142,6 @@ export default function Layout() {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
-  function handleLoaderDone() {
-    setTimeout(() => setShowLoader(false), 450)
-  }
-
   const linkClass = ({ isActive }) =>
     isActive ? `${s.navLink} ${s.navLinkActive}` : s.navLink
 
@@ -119,8 +150,8 @@ export default function Layout() {
 
   return (
     <div className={s.root}>
-      {/* loader — shown once */}
-      {showLoader && <FrequencyLoader onDone={handleLoaderDone} />}
+      {/* loader — sibling to page, outside transition wrapper, plays once */}
+      <Loader />
 
       <header className={s.header}>
         <nav className={s.nav}>
@@ -210,10 +241,7 @@ function PulseFooter() {
     <footer className={s.footer}>
       <div className={`${s.wrap} ${s.footerInner}`}>
         <div>
-          <div className={s.footerBrand}>
-            <span className={s.brandArt}>art</span>
-            <span style={{ color: 'var(--cyan)' }}>sphered</span>
-          </div>
+          <div className={s.footerBrand}>ARTOSPHERED</div>
           <div className={s.footerNote}>{BRAND.tagline}</div>
           <div className={s.footerNote} style={{ marginTop: 6 }}>
             &copy; {new Date().getFullYear()} ARTOSPHERED. All rights reserved.

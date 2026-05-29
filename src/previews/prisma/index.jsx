@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './Layout.jsx'
 import Home from './Home.jsx'
@@ -9,12 +8,10 @@ import Contact from './Contact.jsx'
 import Loader from './Loader.jsx'
 
 export default function PrismaApp() {
-  const [loaded, setLoaded] = useState(false)
-
   return (
     <>
-      {/* First-load PRISM loader — shown once, then fades */}
-      {!loaded && <Loader onDone={() => setLoaded(true)} />}
+      {/* Loader rendered at top level — outside Routes so it covers everything */}
+      <Loader />
 
       <Routes>
         <Route element={<Layout />}>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BASE } from './data'
 import { BRAND, CONTACT } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const initialForm = {
@@ -82,7 +83,7 @@ export default function Contact() {
                       aria-invalid={!!errors.name}
                     />
                     {errors.name && (
-                      <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
+                      <span style={{ fontSize: 12, color: 'var(--amber)', marginTop: 4 }}>
                         {errors.name}
                       </span>
                     )}
@@ -100,7 +101,7 @@ export default function Contact() {
                       aria-invalid={!!errors.email}
                     />
                     {errors.email && (
-                      <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
+                      <span style={{ fontSize: 12, color: 'var(--amber)', marginTop: 4 }}>
                         {errors.email}
                       </span>
                     )}
@@ -122,7 +123,7 @@ export default function Contact() {
                     ))}
                   </select>
                   {errors.topic && (
-                    <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
+                    <span style={{ fontSize: 12, color: 'var(--amber)', marginTop: 4 }}>
                       {errors.topic}
                     </span>
                   )}
@@ -139,7 +140,7 @@ export default function Contact() {
                     aria-invalid={!!errors.message}
                   />
                   {errors.message && (
-                    <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
+                    <span style={{ fontSize: 12, color: 'var(--amber)', marginTop: 4 }}>
                       {errors.message}
                     </span>
                   )}
@@ -195,14 +196,14 @@ export default function Contact() {
                 partnerships &middot; Creative commissions
               </p>
             </div>
-            <img
-              className={s.mapImg}
-              src="https://picsum.photos/seed/aro-contact-img/680/340"
-              alt="ARTOSPHERED &#8212; global cultural archive"
-              loading="lazy"
-              width="680"
-              height="340"
-            />
+            <div className={s.mapGraphicWrap}>
+              <Graphic
+                seed="aro-mo-contact-map"
+                tone="warm"
+                style={{ width: '100%', height: '100%' }}
+                label="Global Network"
+              />
+            </div>
           </div>
         </div>
       </section>

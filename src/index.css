@@ -15,18 +15,37 @@
 }
 
 :root {
-  /* Agency palette — deep space / electric */
-  --bg: #08080c;
-  --bg-2: #0e0e16;
-  --surface: #14141f;
-  --ink: #f4f4f8;
-  --ink-soft: #b9b9c9;
-  --ink-mute: #74748a;
-  --line: rgba(255, 255, 255, 0.09);
-  --brand: #7c5cff;
-  --brand-2: #00e5c0;
-  --accent: #ff5c8a;
-  --glow: 124, 92, 255;
+  /* Palette developed from artosphered.com — warm night-city + Y2K chrome.
+     black / warm-white / amber streetlight / espresso, expanded for Y2K. */
+  --bg: #0b0705;
+  --bg-2: #140d08;
+  --surface: #1c130c;
+  --ink: #f7f1e8;
+  --ink-soft: #ccbdab;
+  --ink-mute: #8a7866;
+  --line: rgba(255, 224, 188, 0.13);
+
+  --amber: #ff8a1e;
+  --amber-2: #ffb35c;
+  --orange: #ff5e1a;
+  --espresso: #2a160d;
+  --oxblood: #5a1d0c;
+
+  /* alias the legacy names to the warm palette so existing rules recolor */
+  --brand: #ff8a1e;
+  --brand-2: #ffb35c;
+  --accent: #ff5e1a;
+  --glow: 255, 138, 30;
+
+  /* Y2K accents (holographic pops — used sparingly) */
+  --y2k-magenta: #ff4da6;
+  --y2k-cyan: #36e6ff;
+  --y2k-lime: #b6ff3a;
+
+  /* Y2K surface treatments */
+  --chrome: linear-gradient(180deg, #fffdf8 0%, #e9ddca 16%, #9c917f 50%, #fff7e9 76%, #b3a690 100%);
+  --holo: linear-gradient(110deg, #ff4da6, #ffae3d, #36e6ff, #b6ff3a, #ff8a1e, #ff4da6);
+  --bevel: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -2px 6px rgba(0, 0, 0, 0.45), 0 6px 18px rgba(0, 0, 0, 0.4);
 
   --radius: 18px;
   --radius-sm: 12px;
@@ -35,10 +54,41 @@
 
   --font-display: 'Syne', 'Space Grotesk', system-ui, sans-serif;
   --font-grotesk: 'Space Grotesk', system-ui, sans-serif;
+  --font-tech: 'Orbitron', 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- Y2K shared utilities (used by agency + available globally) ---- */
+.y2k-chrome {
+  background: var(--chrome);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.5));
+}
+.y2k-holo {
+  background: var(--holo);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: y2k-holo-shift 6s linear infinite;
+}
+@keyframes y2k-holo-shift {
+  to { background-position: 300% 0; }
+}
+.y2k-grid {
+  background-image:
+    linear-gradient(rgba(255, 138, 30, 0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 138, 30, 0.10) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.y2k-star {
+  color: var(--amber-2);
+  filter: drop-shadow(0 0 6px rgba(255, 179, 92, 0.7));
 }
 
 html {

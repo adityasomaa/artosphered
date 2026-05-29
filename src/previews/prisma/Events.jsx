@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { EVENTS } from '../../shared/content.js'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const STATUS_FILTERS = ['All', 'Upcoming', 'Covered']
@@ -30,7 +31,7 @@ export default function Events() {
       <div className={s.container}>
         {/* Header */}
         <div style={{ marginBottom: 52 }} data-reveal>
-          <div className={s.eyebrow}>On the ground</div>
+          <div className={s.eyebrow}>On the ground &#10022;</div>
           <h1 className={s.h2}>Event Coverage</h1>
           <p className={s.lead} style={{ marginTop: 14 }}>
             We document the shows, happenings and gatherings that shape contemporary culture &mdash; from biennales and fashion weeks to late-night performances and open studios.
@@ -61,16 +62,13 @@ export default function Events() {
               data-reveal
               data-reveal-delay={i * 80}
               onClick={() => setSelected(ev)}
-              aria-label={`View: ${ev.name}`}
+              aria-label={'View: ' + ev.name}
             >
               <div className={s.cardMedia}>
-                <img
-                  src={`https://picsum.photos/seed/${ev.seed}/600/450`}
-                  alt={ev.name}
-                  loading="lazy"
-                  width={600}
-                  height={450}
-                  sizes="(max-width: 600px) 100vw, 33vw"
+                <Graphic
+                  seed={'aro-ev-' + ev.seed}
+                  tone={ev.status === 'Upcoming' ? 'holo' : 'warm'}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                 />
                 <span
                   className={`${s.badge} ${ev.status === 'Upcoming' ? s.badgeUpcoming : s.badgeCurrent}`}
@@ -118,12 +116,10 @@ export default function Events() {
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className={s.modalMedia}>
-                <img
-                  src={`https://picsum.photos/seed/${selected.seed}/600/500`}
-                  alt={selected.name}
-                  loading="lazy"
-                  width={600}
-                  height={500}
+                <Graphic
+                  seed={'aro-ev-modal-' + selected.seed}
+                  tone={selected.status === 'Upcoming' ? 'holo' : 'amber'}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                 />
               </div>
               <div className={s.modalBody}>
@@ -132,10 +128,10 @@ export default function Events() {
                   style={{
                     position: 'static',
                     display: 'inline-flex',
-                    color: selected.status === 'Upcoming' ? 'var(--p-accent)' : 'var(--p-teal)',
+                    color: selected.status === 'Upcoming' ? 'var(--p-accent)' : 'var(--p-cyan)',
                     borderColor: selected.status === 'Upcoming'
-                      ? 'rgba(155,231,255,0.4)'
-                      : 'rgba(116,255,224,0.4)',
+                      ? 'rgba(255,174,61,0.4)'
+                      : 'rgba(54,230,255,0.4)',
                   }}
                 >
                   {selected.status}

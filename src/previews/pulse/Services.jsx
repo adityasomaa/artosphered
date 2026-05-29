@@ -4,7 +4,8 @@ import s from './styles.module.css'
 
 const BASE = '/p/pulse'
 
-const ACCENT_COLORS = ['var(--hot)', 'var(--cyan)', 'var(--violet)', 'var(--hot)']
+/* Y2K warm rave accent cycle */
+const ACCENT_COLORS = ['var(--hot)', 'var(--amber)', 'var(--gold)', 'var(--hot)']
 
 export default function Services() {
   return (

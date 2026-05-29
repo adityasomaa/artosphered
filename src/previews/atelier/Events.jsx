@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EVENTS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const STATUS_FILTERS = ['All', 'Upcoming', 'Covered']
@@ -56,12 +57,11 @@ export default function Events() {
               data-reveal-delay={Math.min(i * 80, 320)}
             >
               <div className={s.evCardImg}>
-                <img
-                  src={`https://picsum.photos/seed/${ev.seed}/480/640`}
-                  alt={ev.name}
-                  width={480}
-                  height={640}
-                  loading="lazy"
+                <Graphic
+                  seed={`aro-ed-ev-${i + 1}`}
+                  tone={i % 3 === 0 ? 'amber' : i % 3 === 1 ? 'warm' : 'holo'}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+                  label={ev.tag}
                 />
               </div>
               <div className={s.evCardBody}>

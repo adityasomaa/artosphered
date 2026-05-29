@@ -64,7 +64,7 @@ export default function Layout() {
             <Link to={BASE} className={s.brand}>
               <span className={s.brandMark} aria-hidden="true" />
               <span>
-                <span style={{ color: 'var(--p-accent)' }}>{BRAND.wordmark[0]}</span>
+                <span style={{ color: 'var(--p-accent)', textShadow: '0 0 18px rgba(255,174,61,0.55)' }}>{BRAND.wordmark[0]}</span>
                 {BRAND.wordmark[1]}
               </span>
               <span className={s.brandSub}>Cultural Archive</span>
@@ -157,7 +157,7 @@ export default function Layout() {
               <div>
                 <div className={s.footerBrand}>
                   <span className={s.brandMark} style={{ display: 'inline-block', marginRight: 10 }} aria-hidden="true" />
-                  <span style={{ color: 'var(--p-accent)' }}>ART</span>OSPHERED
+                  <span style={{ color: 'var(--p-accent)', textShadow: '0 0 18px rgba(255,174,61,0.55)' }}>ART</span>OSPHERED
                 </div>
                 <p style={{ color: 'var(--p-muted)', fontSize: '0.9rem', marginTop: 14, maxWidth: '28ch', lineHeight: 1.7 }}>
                   {BRAND.tagline}. Documenting creative culture since {BRAND.est}.

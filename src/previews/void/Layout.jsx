@@ -7,130 +7,145 @@ import s from './styles.module.css'
 
 const BASE = '/p/void'
 
-// ---- Terminal Loader ----
+/* ====================================================
+   LOADER — Amber-phosphor Y2K terminal boot sequence
+   Plays on EVERY mount. No sessionStorage.
+   ==================================================== */
 const BOOT_LINES = [
-  { text: 'ARTOSPHERED ARCHIVE v2.6.0', delay: 0 },
-  { text: 'INITIALIZING CULTURAL DATABASE...', delay: 120 },
-  { text: 'LOADING INDEX: 120 ENTRIES FOUND', delay: 260 },
-  { text: 'CROSS-REF: 8 CITIES / 5 CATEGORIES', delay: 420 },
-  { text: 'MOUNTING EVENT LOG...', delay: 580 },
-  { text: 'ESTABLISHING READ CONTEXT: EST. 2024', delay: 740 },
-  { text: 'ARCHIVE READY.', delay: 900 },
+  { text: 'ARTOSPHERED ARCHIVE v2.6.0', ok: false },
+  { text: 'INITIALIZING ARCHIVE...', ok: false },
+  { text: 'INDEXING 120 ENTRIES ✓', ok: true },
+  { text: 'CROSS-REF: 8 CITIES / 5 CATEGORIES', ok: false },
+  { text: 'MOUNTING EVENT LOG...', ok: false },
+  { text: 'LOADING ARTOSPHERED//2026 ✦', ok: false },
+  { text: 'ARCHIVE READY.', ok: true },
 ]
 
-function TerminalLoader({ onDone }) {
-  const [visibleLines, setVisibleLines] = useState([])
+function Loader() {
+  const [gone, setGone] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(0)
   const [progress, setProgress] = useState(0)
-  const [done, setDone] = useState(false)
-  const [exit, setExit] = useState(false)
 
-  useEffect(() => {
-    // Stop lenis during loader
-    if (window.__lenis) window.__lenis.stop()
+  useEffect(function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setGone(true)
+      return
+    }
 
-    const timers = []
+    try { window.__lenis && window.__lenis.stop() } catch (e) {}
 
-    BOOT_LINES.forEach((line, i) => {
+    var timers = []
+    var STEP = 260
+
+    BOOT_LINES.forEach(function (_, i) {
       timers.push(
-        setTimeout(() => {
-          setVisibleLines(v => [...v, line.text])
+        setTimeout(function () {
+          setVisibleCount(function (v) { return v + 1 })
           setProgress(Math.round(((i + 1) / BOOT_LINES.length) * 100))
-        }, line.delay)
+        }, 120 + i * STEP)
       )
     })
 
+    // Fade out
     timers.push(
-      setTimeout(() => {
-        setDone(true)
-      }, 1100)
+      setTimeout(function () {
+        setGone(true)
+        try { window.__lenis && window.__lenis.start() } catch (e) {}
+      }, 120 + BOOT_LINES.length * STEP + 420)
     )
 
-    timers.push(
-      setTimeout(() => {
-        setExit(true)
-        if (window.__lenis) window.__lenis.start()
-        onDone()
-      }, 1600)
-    )
-
-    return () => {
-      timers.forEach(t => clearTimeout(t))
-      if (window.__lenis) window.__lenis.start()
+    return function () {
+      timers.forEach(function (t) { clearTimeout(t) })
+      try { window.__lenis && window.__lenis.start() } catch (e) {}
     }
-  }, [onDone])
+  }, [])
 
   return (
-    <motion.div
-      className={s.loader}
-      initial={{ opacity: 1 }}
-      animate={{ opacity: exit ? 0 : 1 }}
-      transition={{ duration: 0.35, ease: 'easeIn' }}
-      aria-label="Loading archive"
-      aria-live="polite"
-    >
-      <div className={s.loaderInner}>
-        <div className={s.loaderHeader}>
-          <span className={s.loaderBrand}>ARTOSPHERED</span>
-          <span className={s.loaderVersion}>ARCHIVE SYSTEM</span>
-        </div>
+    <AnimatePresence>
+      {!gone && (
+        <motion.div
+          key="ld"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className={s.loader}
+        >
+          <div className={s.loaderInner}>
 
-        <div className={s.loaderTerminal}>
-          {visibleLines.map((line, i) => (
-            <motion.div
-              key={i}
-              className={s.loaderLine}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
-            >
-              <span className={s.loaderPrompt}>&gt;&nbsp;</span>
-              <span>{line}</span>
-            </motion.div>
-          ))}
-          {!done && (
-            <div className={s.loaderLine}>
-              <span className={s.loaderPrompt}>&gt;&nbsp;</span>
-              <span className={s.loaderCursor}>_</span>
+            {/* Header */}
+            <div className={s.loaderHeader}>
+              <span className={s.loaderBrand}>ARTOSPHERED</span>
+              <span className={s.loaderVersion}>ARCHIVE SYSTEM v2.6</span>
             </div>
-          )}
-        </div>
 
-        <div className={s.loaderProgressWrap}>
-          <div className={s.loaderProgressTrack}>
-            <motion.div
-              className={s.loaderProgressFill}
-              initial={{ width: '0%' }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-            />
+            {/* Terminal lines */}
+            <div className={s.loaderTerminal}>
+              {BOOT_LINES.slice(0, visibleCount).map(function (line, i) {
+                return (
+                  <motion.div
+                    key={i}
+                    className={s.loaderLine}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                  >
+                    <span className={s.loaderPrompt}>&gt;&nbsp;</span>
+                    <span className={line.ok ? s.loaderOk : undefined}>{line.text}</span>
+                  </motion.div>
+                )
+              })}
+              {visibleCount < BOOT_LINES.length && (
+                <div className={s.loaderLine}>
+                  <span className={s.loaderPrompt}>&gt;&nbsp;</span>
+                  <span className={s.loaderCursor} />
+                </div>
+              )}
+            </div>
+
+            {/* Progress bar */}
+            <div className={s.loaderProgressWrap}>
+              <div className={s.loaderProgressTrack}>
+                <motion.div
+                  className={s.loaderProgressFill}
+                  initial={{ width: '0%' }}
+                  animate={{ width: progress + '%' }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                />
+              </div>
+              <div className={s.loaderProgressMeta}>
+                <span>INDEXING</span>
+                <span className={s.loaderProgressNum}>{progress}%</span>
+              </div>
+            </div>
+
           </div>
-          <div className={s.loaderProgressMeta}>
-            <span>INDEXING</span>
-            <span className={s.loaderProgressNum}>{progress}%</span>
-          </div>
-        </div>
-      </div>
-    </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
-// ---- Nav ----
+/* ====================================================
+   NAV
+   ==================================================== */
 function Nav() {
   const location = useLocation()
   const [open, setOpen] = useState(false)
 
-  useEffect(() => { setOpen(false) }, [location.pathname])
+  useEffect(function () { setOpen(false) }, [location.pathname])
 
-  useEffect(() => {
+  useEffect(function () {
     document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return function () { document.body.style.overflow = '' }
   }, [open])
 
-  const links = NAV.map(n => ({
-    to: n.path ? `${BASE}/${n.path}` : BASE,
-    label: n.label,
-    end: !!n.end,
-  }))
+  const links = NAV.map(function (n) {
+    return {
+      to: n.path ? BASE + '/' + n.path : BASE,
+      label: n.label,
+      end: !!n.end,
+    }
+  })
 
   return (
     <>
@@ -142,18 +157,23 @@ function Nav() {
           </Link>
 
           <div className={s.navLinks}>
-            {links.map(({ to, label, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  isActive ? `${s.navLink} ${s.navLinkActive}` : s.navLink
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
+            {links.map(function (_ref) {
+              var to = _ref.to
+              var label = _ref.label
+              var end = _ref.end
+              return (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={end}
+                  className={function (_ref2) {
+                    return _ref2.isActive ? s.navLink + ' ' + s.navLinkActive : s.navLink
+                  }}
+                >
+                  {label}
+                </NavLink>
+              )
+            })}
           </div>
 
           <div className={s.navSpacer} />
@@ -163,8 +183,8 @@ function Nav() {
           </Link>
 
           <button
-            className={`${s.hamburger} ${open ? s.hamburgerOpen : ''}`}
-            onClick={() => setOpen(v => !v)}
+            className={s.hamburger + (open ? ' ' + s.hamburgerOpen : '')}
+            onClick={function () { setOpen(function (v) { return !v }) }}
             aria-label={open ? 'Close menu' : 'Open menu'}
           >
             <span className={s.hamburgerLine} />
@@ -174,30 +194,43 @@ function Nav() {
         </div>
       </nav>
 
-      <div className={`${s.mobileOverlay} ${open ? s.mobileOverlayOpen : ''}`} role="dialog" aria-modal="true">
+      <div
+        className={s.mobileOverlay + (open ? ' ' + s.mobileOverlayOpen : '')}
+        role="dialog"
+        aria-modal="true"
+      >
         <div className={s.mobileOverlayHeader}>
           <span className={s.mobileOverlayLabel}>NAVIGATION</span>
         </div>
-        {links.map(({ to, label, end }, i) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              isActive ? `${s.mobileNavLink} ${s.mobileNavLinkActive}` : s.mobileNavLink
-            }
-          >
-            <span className={s.mobileNavIdx}>{String(i + 1).padStart(2, '0')}</span>
-            {label}
-          </NavLink>
-        ))}
+        {links.map(function (_ref3, i) {
+          var to = _ref3.to
+          var label = _ref3.label
+          var end = _ref3.end
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={function (_ref4) {
+                return _ref4.isActive
+                  ? s.mobileNavLink + ' ' + s.mobileNavLinkActive
+                  : s.mobileNavLink
+              }}
+            >
+              <span className={s.mobileNavIdx}>{String(i + 1).padStart(2, '0')}</span>
+              {label}
+            </NavLink>
+          )
+        })}
         <Link to="/" className={s.mobileBackLink}>&#8617; ARTOSPHERED</Link>
       </div>
     </>
   )
 }
 
-// ---- Footer ----
+/* ====================================================
+   FOOTER
+   ==================================================== */
 function Footer() {
   return (
     <footer className={s.footer}>
@@ -215,19 +248,26 @@ function Footer() {
         </div>
         <div className={s.footerRight}>
           <div className={s.footerNav}>
-            {NAV.map(n => (
-              <Link
-                key={n.path}
-                to={n.path ? `${BASE}/${n.path}` : BASE}
-                className={s.footerLink}
-              >
-                {n.label}
-              </Link>
-            ))}
+            {NAV.map(function (n) {
+              return (
+                <Link
+                  key={n.path}
+                  to={n.path ? BASE + '/' + n.path : BASE}
+                  className={s.footerLink}
+                >
+                  {n.label}
+                </Link>
+              )
+            })}
           </div>
           <div className={s.footerContact}>
-            <a href={`mailto:${BRAND.email}`} className={s.footerLink}>{BRAND.email}</a>
-            <a href={BRAND.instagramUrl} className={s.footerLink} target="_blank" rel="noopener noreferrer">
+            <a href={'mailto:' + BRAND.email} className={s.footerLink}>{BRAND.email}</a>
+            <a
+              href={BRAND.instagramUrl}
+              className={s.footerLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {BRAND.instagram}
             </a>
           </div>
@@ -235,13 +275,15 @@ function Footer() {
       </div>
       <div className={s.footerBottom}>
         <span className={s.footerCopy}>&copy; 2026 ARTOSPHERED &mdash; ALL RIGHTS RESERVED</span>
-        <span className={s.footerBottomTag}>CULTURE, CATALOGUED</span>
+        <span className={s.footerBottomTag}>CULTURE, CATALOGUED &#10022;</span>
       </div>
     </footer>
   )
 }
 
-// ---- Page transition variants ----
+/* ====================================================
+   PAGE TRANSITION
+   ==================================================== */
 const pageVariants = {
   initial: { opacity: 0, clipPath: 'inset(0 0 100% 0)' },
   animate: { opacity: 1, clipPath: 'inset(0 0 0% 0)' },
@@ -253,40 +295,19 @@ const pageTransition = {
   ease: [0.83, 0, 0.17, 1],
 }
 
-// ---- Layout ----
-const LOADER_KEY = 'void-archive-loaded'
-
+/* ====================================================
+   LAYOUT
+   ==================================================== */
 export default function Layout() {
   useReveal()
   const location = useLocation()
-  const [loaderDone, setLoaderDone] = useState(() => {
-    // Show loader only once per session
-    return typeof sessionStorage !== 'undefined' && sessionStorage.getItem(LOADER_KEY) === '1'
-  })
-
-  const handleLoaderDone = () => {
-    if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.setItem(LOADER_KEY, '1')
-    }
-    setLoaderDone(true)
-  }
-
-  // Respect reduced motion — skip loader
-  const prefersReduced =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  const showLoader = !loaderDone && !prefersReduced
 
   return (
     <div className={s.root}>
-      <AnimatePresence>
-        {showLoader && (
-          <TerminalLoader key="loader" onDone={handleLoaderDone} />
-        )}
-      </AnimatePresence>
+      {/* Loader renders OUTSIDE the page wrapper — plays on every mount */}
+      <Loader />
 
-      <div className={s.layout} style={{ visibility: showLoader ? 'hidden' : 'visible' }}>
+      <div className={s.layout}>
         <Nav />
         <main className={s.main}>
           <AnimatePresence mode="wait">

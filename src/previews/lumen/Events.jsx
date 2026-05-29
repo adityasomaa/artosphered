@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EVENTS } from '../../shared/content'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const STATUSES = ['All', 'Upcoming', 'Covered']
@@ -44,13 +45,11 @@ export default function Events() {
             data-reveal-delay={String(i * 90)}
           >
             <div className={s.eventCardImgWrap}>
-              <img
-                src={`https://picsum.photos/seed/${ev.seed}/1200/700`}
-                alt={ev.name}
-                loading="lazy"
-                width="1200"
-                height="700"
-                sizes="(max-width: 860px) 100vw, 50vw"
+              <Graphic
+                seed={`aro-mo-ev-${ev.seed}`}
+                tone="amber"
+                className={s.eventGraphic}
+                style={{ width: '100%', height: '100%' }}
               />
               <div className={s.eventCardOverlay} />
             </div>

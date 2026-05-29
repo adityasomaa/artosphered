@@ -7,61 +7,93 @@ import { BRAND, NAV as CONTENT_NAV } from '../../shared/content'
 import s from './styles.module.css'
 
 /* ── Loader ─────────────────────────────────────────────────── */
-const prefersReducedMotion =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+function Loader() {
+  const [gone, setGone] = useState(false)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setGone(true)
+      return
+    }
+    try { window.__lenis && window.__lenis.stop() } catch (e) {}
+    const t = setTimeout(() => {
+      setGone(true)
+      try { window.__lenis && window.__lenis.start() } catch (e) {}
+    }, 2200)
+    return () => {
+      clearTimeout(t)
+      try { window.__lenis && window.__lenis.start() } catch (e) {}
+    }
+  }, [])
 
-function Loader({ onDone }) {
   return (
-    <motion.div
-      className={s.loaderWrap}
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      aria-hidden="true"
-    >
-      {/* Wordmark slides up */}
-      <div className={s.loaderWordmark}>
-        <motion.span
-          className={s.loaderWordmarkInner}
-          initial={{ y: '110%' }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
-          ARTOSPHERED
-        </motion.span>
-      </div>
-
-      {/* Issue line fades in */}
-      <motion.p
-        className={s.loaderIssue}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.55, duration: 0.4 }}
-      >
-        Issue 01 &nbsp;/&nbsp; 2026
-      </motion.p>
-
-      {/* Rule draws across */}
-      <div className={s.loaderRuleWrap}>
+    <AnimatePresence>
+      {!gone && (
         <motion.div
-          className={s.loaderRuleLine}
-          initial={{ width: 0 }}
-          animate={{ width: '100%' }}
-          transition={{ delay: 0.7, duration: 0.5, ease: 'easeInOut' }}
-        />
-      </div>
+          key="ld"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'grid', placeItems: 'center' }}
+          className={s.loader}
+          aria-hidden="true"
+        >
+          <div className={s.loaderInner}>
+            {/* Chrome wordmark slides up */}
+            <div className={s.loaderWordmark} style={{ overflow: 'hidden' }}>
+              <motion.span
+                className={s.loaderWordmarkInner}
+                initial={{ y: '110%' }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+              >
+                ARTOSPHERED
+              </motion.span>
+            </div>
 
-      {/* Tagline */}
-      <motion.p
-        className={s.loaderTagline}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.0, duration: 0.4 }}
-      >
-        {BRAND.tagline}
-      </motion.p>
-    </motion.div>
+            {/* Issue line */}
+            <motion.p
+              className={s.loaderIssue}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.45 }}
+            >
+              ISSUE 01 &mdash; 2026
+            </motion.p>
+
+            {/* Holographic rule wipes across */}
+            <div className={s.loaderRuleWrap}>
+              <motion.div
+                className={s.loaderRuleLine}
+                initial={{ width: 0 }}
+                animate={{ width: '100%' }}
+                transition={{ delay: 0.85, duration: 0.65, ease: 'easeInOut' }}
+              />
+            </div>
+
+            {/* Sparkle */}
+            <motion.span
+              className={s.loaderSparkle}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.1, duration: 0.4 }}
+              aria-hidden="true"
+            >
+              &#10022;
+            </motion.span>
+
+            {/* Tagline */}
+            <motion.p
+              className={s.loaderTagline}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.35, duration: 0.4 }}
+            >
+              {BRAND.tagline}
+            </motion.p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -76,22 +108,7 @@ const NAV = CONTENT_NAV.map((n) => ({
 export default function Layout() {
   useReveal()
   const [open, setOpen] = useState(false)
-  const [loaded, setLoaded] = useState(false)
   const location = useLocation()
-
-  /* First-load loader */
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setLoaded(true)
-      return
-    }
-    if (window.__lenis) window.__lenis.stop()
-    const t = setTimeout(() => {
-      setLoaded(true)
-      if (window.__lenis) window.__lenis.start()
-    }, 1450)
-    return () => clearTimeout(t)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { setOpen(false) }, [location.pathname])
 
@@ -108,12 +125,8 @@ export default function Layout() {
 
   return (
     <div className={s.atelier}>
-      {/* ── First-load loader ───────────────────────────── */}
-      <AnimatePresence>
-        {!loaded && !prefersReducedMotion && (
-          <Loader key="loader" onDone={() => setLoaded(true)} />
-        )}
-      </AnimatePresence>
+      {/* ── Loader — sibling OUTSIDE page transitions ────── */}
+      <Loader />
 
       {/* ── Header ──────────────────────────────────────── */}
       <header className={s.header}>
@@ -174,9 +187,9 @@ export default function Layout() {
           <motion.div
             key={location.pathname}
             className={s.pageTransition}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={prefersReducedMotion ? false : { opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <Outlet />

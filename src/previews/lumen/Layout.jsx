@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { to: 'contact', label: 'Contact' },
 ]
 
-// Letterbox wipe: black bars retract top/bottom, then page fades in
+/* Letterbox wipe: black bars retract top/bottom, then page fades in */
 const barVariants = {
   initial: { scaleY: 1 },
   animate: { scaleY: 0, transition: { duration: 0.55, ease: [0.76, 0, 0.24, 1] } },
@@ -29,7 +29,6 @@ const contentVariants = {
 export default function Layout() {
   useReveal()
   const [open, setOpen] = useState(false)
-  const [loaderDone, setLoaderDone] = useState(false)
   const { pathname } = useLocation()
 
   useEffect(() => { setOpen(false) }, [pathname])
@@ -45,7 +44,8 @@ export default function Layout() {
 
   return (
     <div className={s.lumen}>
-      {!loaderDone && <Loader onDone={() => setLoaderDone(true)} />}
+      {/* Loader renders OUTSIDE the page-transition wrapper so route changes never kill it */}
+      <Loader />
 
       <header className={s.header}>
         <Link to={BASE} className={s.brand}>
@@ -97,7 +97,7 @@ export default function Layout() {
             exit="exit"
             style={{ position: 'relative' }}
           >
-            {/* Letterbox bars for page transition */}
+            {/* Letterbox bars for page transitions */}
             <motion.div
               variants={barVariants}
               initial="initial"
@@ -109,7 +109,7 @@ export default function Layout() {
                 left: 0,
                 right: 0,
                 height: '12vh',
-                background: '#0c0b0a',
+                background: '#0b0705',
                 zIndex: 350,
                 transformOrigin: 'top',
                 pointerEvents: 'none',
@@ -126,7 +126,7 @@ export default function Layout() {
                 left: 0,
                 right: 0,
                 height: '12vh',
-                background: '#0c0b0a',
+                background: '#0b0705',
                 zIndex: 350,
                 transformOrigin: 'bottom',
                 pointerEvents: 'none',

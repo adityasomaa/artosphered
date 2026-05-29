@@ -1,27 +1,28 @@
 import { Link } from 'react-router-dom'
 import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content.js'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const BASE = '/p/prisma'
 
 const PILLARS = [
   {
-    icon: '◈',
+    icon: '&#10022;',
     title: 'Culture Report',
     desc: 'Long-form editorial documenting the movements, aesthetics and ideas reshaping contemporary culture across cities.',
     color: 'var(--p-accent)',
   },
   {
-    icon: '◉',
+    icon: '&#9711;',
     title: 'Art & Design',
     desc: 'Visual stories from studios, galleries and streets — the craft behind the culture.',
-    color: 'var(--p-violet)',
+    color: 'var(--p-magenta)',
   },
   {
-    icon: '◎',
+    icon: '&#9672;',
     title: 'Event Coverage',
     desc: 'On-the-ground documentation of shows, happenings and moments that matter.',
-    color: 'var(--p-magenta)',
+    color: 'var(--p-cyan)',
   },
 ]
 
@@ -36,7 +37,7 @@ export default function Home() {
         <div className={s.container}>
           <div className={s.heroInner}>
             <div className={s.heroCard} data-reveal data-reveal-delay="0">
-              <div className={s.eyebrow}>Est. {BRAND.est} &mdash; Global</div>
+              <div className={s.eyebrow}>Est. {BRAND.est} &mdash; Global &#10022;</div>
               <h1 className={s.h1}>
                 {BRAND.heroLine1}
                 <br />
@@ -61,11 +62,11 @@ export default function Home() {
                       className={s.chipDot}
                       style={
                         i === 1
-                          ? { background: 'var(--p-accent)', boxShadow: '0 0 8px var(--p-accent)' }
-                          : i === 2
-                          ? { background: 'var(--p-violet)', boxShadow: '0 0 8px var(--p-violet)' }
-                          : i === 3
                           ? { background: 'var(--p-magenta)', boxShadow: '0 0 8px var(--p-magenta)' }
+                          : i === 2
+                          ? { background: 'var(--p-cyan)', boxShadow: '0 0 8px var(--p-cyan)' }
+                          : i === 3
+                          ? { background: 'var(--p-lime)', boxShadow: '0 0 8px var(--p-lime)' }
                           : undefined
                       }
                     />
@@ -111,7 +112,11 @@ export default function Home() {
                 data-reveal
                 data-reveal-delay={i * 100}
               >
-                <span className={s.pillarIcon} style={{ color: p.color }}>{p.icon}</span>
+                <span
+                  className={s.pillarIcon}
+                  style={{ color: p.color }}
+                  dangerouslySetInnerHTML={{ __html: p.icon }}
+                />
                 <h3 className={s.h3} style={{ marginTop: 16 }}>{p.title}</h3>
                 <p style={{ color: 'var(--p-muted)', marginTop: 10, fontSize: '0.95rem', lineHeight: 1.7 }}>
                   {p.desc}
@@ -147,13 +152,10 @@ export default function Home() {
                 style={{ display: 'block', textDecoration: 'none' }}
               >
                 <div className={s.cardMedia}>
-                  <img
-                    src={`https://picsum.photos/seed/${art.seed}/600/450`}
-                    alt={art.title}
-                    loading="lazy"
-                    width={600}
-                    height={450}
-                    sizes="(max-width: 600px) 100vw, 33vw"
+                  <Graphic
+                    seed={'aro-pr-' + art.seed}
+                    tone="holo"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                   />
                   <span className={`${s.badge} ${s.badgeUpcoming}`}>{art.cat}</span>
                 </div>
@@ -189,13 +191,10 @@ export default function Home() {
           </div>
           <div className={s.featured} data-reveal>
             <div className={s.featuredMedia}>
-              <img
-                src={`https://picsum.photos/seed/${featuredEvents[0].seed}/800/600`}
-                alt={featuredEvents[0].name}
-                loading="lazy"
-                width={800}
-                height={600}
-                sizes="(max-width: 860px) 100vw, 50vw"
+              <Graphic
+                seed={'aro-pr-feat-' + featuredEvents[0].seed}
+                tone="warm"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
               />
             </div>
             <div className={s.featuredBody}>
@@ -211,7 +210,7 @@ export default function Home() {
                     color:
                       featuredEvents[0].status === 'Upcoming'
                         ? 'var(--p-accent)'
-                        : 'var(--p-teal)',
+                        : 'var(--p-cyan)',
                   }}
                 >
                   {featuredEvents[0].status}
@@ -237,7 +236,7 @@ export default function Home() {
         <div className={s.container}>
           <div className={s.newsletter} data-reveal>
             <div>
-              <div className={s.eyebrow}>Work with us</div>
+              <div className={s.eyebrow}>Work with us &#10022;</div>
               <h2 className={s.h2} style={{ marginTop: 8 }}>
                 Let&apos;s create something
                 <br />

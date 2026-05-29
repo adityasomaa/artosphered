@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ARTICLES, ARTICLE_CATS } from '../../shared/content.js'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 export default function CultureReport() {
@@ -7,7 +8,7 @@ export default function CultureReport() {
 
   const filtered = activeCat === 'All'
     ? ARTICLES
-    : ARTICLES.filter(a => a.cat === activeCat)
+    : ARTICLES.filter(function (a) { return a.cat === activeCat })
 
   return (
     <div className={s.innerPage}>
@@ -28,15 +29,17 @@ export default function CultureReport() {
         {/* Filter bar */}
         <div className={s.filterBar}>
           <span className={s.filterBarLabel}>FILTER BY</span>
-          {ARTICLE_CATS.map(cat => (
-            <button
-              key={cat}
-              className={`${s.filterBtn} ${activeCat === cat ? s.filterBtnActive : ''}`}
-              onClick={() => setActiveCat(cat)}
-            >
-              {cat.toUpperCase()}
-            </button>
-          ))}
+          {ARTICLE_CATS.map(function (cat) {
+            return (
+              <button
+                key={cat}
+                className={s.filterBtn + (activeCat === cat ? ' ' + s.filterBtnActive : '')}
+                onClick={function () { setActiveCat(cat) }}
+              >
+                {cat.toUpperCase()}
+              </button>
+            )
+          })}
         </div>
 
         {/* Archive table */}
@@ -54,31 +57,30 @@ export default function CultureReport() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((a, i) => (
-                <tr key={a.id} className={`${s.indexRow} ${s.indexRowExpandable}`}>
-                  <td className={s.tdNo}>{String(i + 1).padStart(2, '0')}</td>
-                  <td className={s.tdDate}>{a.date}</td>
-                  <td className={s.tdCity}>{a.city.toUpperCase()}</td>
-                  <td className={s.tdCat}>
-                    <span className={s.catPill}>{a.cat.toUpperCase()}</span>
-                  </td>
-                  <td className={s.tdRead}>{a.read}</td>
-                  <td className={s.tdTitleBlock}>
-                    <span className={s.articleTitle}>{a.title}</span>
-                    <span className={s.articleExcerpt}>{a.excerpt}</span>
-                  </td>
-                  <td className={s.tdImg}>
-                    <img
-                      src={`https://picsum.photos/seed/${a.seed}/80/80`}
-                      alt={a.title}
-                      width={80}
-                      height={80}
-                      loading="lazy"
-                      className={s.thumbImg}
-                    />
-                  </td>
-                </tr>
-              ))}
+              {filtered.map(function (a, i) {
+                return (
+                  <tr key={a.id} className={s.indexRow + ' ' + s.indexRowExpandable}>
+                    <td className={s.tdNo}>{String(i + 1).padStart(2, '0')}</td>
+                    <td className={s.tdDate}>{a.date}</td>
+                    <td className={s.tdCity}>{a.city.toUpperCase()}</td>
+                    <td className={s.tdCat}>
+                      <span className={s.catPill}>{a.cat.toUpperCase()}</span>
+                    </td>
+                    <td className={s.tdRead}>{a.read}</td>
+                    <td className={s.tdTitleBlock}>
+                      <span className={s.articleTitle}>{a.title}</span>
+                      <span className={s.articleExcerpt}>{a.excerpt}</span>
+                    </td>
+                    <td className={s.tdImg}>
+                      <Graphic
+                        seed={'aro-ar-' + (i + 1)}
+                        tone="amber"
+                        className={s.thumbWrap}
+                      />
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
           {filtered.length === 0 && (

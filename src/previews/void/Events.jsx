@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EVENTS } from '../../shared/content.js'
+import Graphic from '../../shared/Graphic'
 import s from './styles.module.css'
 
 const STATUS_FILTERS = ['All', 'Upcoming', 'Covered']
@@ -9,7 +10,7 @@ export default function Events() {
 
   const filtered = activeStatus === 'All'
     ? EVENTS
-    : EVENTS.filter(ev => ev.status === activeStatus)
+    : EVENTS.filter(function (ev) { return ev.status === activeStatus })
 
   return (
     <div className={s.innerPage}>
@@ -30,52 +31,53 @@ export default function Events() {
         {/* Filter bar */}
         <div className={s.filterBar}>
           <span className={s.filterBarLabel}>STATUS</span>
-          {STATUS_FILTERS.map(st => (
-            <button
-              key={st}
-              className={`${s.filterBtn} ${activeStatus === st ? s.filterBtnActive : ''}`}
-              onClick={() => setActiveStatus(st)}
-            >
-              {st.toUpperCase()}
-            </button>
-          ))}
+          {STATUS_FILTERS.map(function (st) {
+            return (
+              <button
+                key={st}
+                className={s.filterBtn + (activeStatus === st ? ' ' + s.filterBtnActive : '')}
+                onClick={function () { setActiveStatus(st) }}
+              >
+                {st.toUpperCase()}
+              </button>
+            )
+          })}
         </div>
 
         {/* Events log */}
         <div className={s.eventLog} data-reveal>
-          {filtered.map((ev, i) => (
-            <div key={ev.id} className={s.eventEntry}>
-              <div className={s.eventEntryLeft}>
-                <span className={s.eventNo}>{String(i + 1).padStart(2, '0')}</span>
-                <div className={s.eventDateBlock}>
-                  <span className={s.eventDate}>{ev.date}</span>
-                  <span className={s.eventCity}>{ev.city.toUpperCase()}</span>
+          {filtered.map(function (ev, i) {
+            return (
+              <div key={ev.id} className={s.eventEntry}>
+                <div className={s.eventEntryLeft}>
+                  <span className={s.eventNo}>{String(i + 1).padStart(2, '0')}</span>
+                  <div className={s.eventDateBlock}>
+                    <span className={s.eventDate}>{ev.date}</span>
+                    <span className={s.eventCity}>{ev.city.toUpperCase()}</span>
+                  </div>
+                </div>
+
+                <div className={s.eventEntryCenter}>
+                  <div className={s.eventNameRow}>
+                    <span className={s.eventName}>{ev.name}</span>
+                    <span className={s.eventTag}>{ev.tag.toUpperCase()}</span>
+                  </div>
+                  <p className={s.eventExcerpt}>{ev.excerpt}</p>
+                </div>
+
+                <div className={s.eventEntryRight}>
+                  <Graphic
+                    seed={'aro-ev-' + (i + 1)}
+                    tone="warm"
+                    className={s.eventThumbWrap}
+                  />
+                  <span className={ev.status === 'Upcoming' ? s.statusUpcoming : s.statusCovered}>
+                    {ev.status.toUpperCase()}
+                  </span>
                 </div>
               </div>
-
-              <div className={s.eventEntryCenter}>
-                <div className={s.eventNameRow}>
-                  <span className={s.eventName}>{ev.name}</span>
-                  <span className={s.eventTag}>{ev.tag.toUpperCase()}</span>
-                </div>
-                <p className={s.eventExcerpt}>{ev.excerpt}</p>
-              </div>
-
-              <div className={s.eventEntryRight}>
-                <img
-                  src={`https://picsum.photos/seed/${ev.seed}/120/80`}
-                  alt={ev.name}
-                  width={120}
-                  height={80}
-                  loading="lazy"
-                  className={s.eventThumb}
-                />
-                <span className={ev.status === 'Upcoming' ? s.statusUpcoming : s.statusCovered}>
-                  {ev.status.toUpperCase()}
-                </span>
-              </div>
-            </div>
-          ))}
+            )
+          })}
 
           {filtered.length === 0 && (
             <div className={s.emptyState}>
