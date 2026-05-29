@@ -1,62 +1,145 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useReveal } from '../../shared/useReveal'
+import { BRAND, NAV } from '../../shared/content.js'
 import s from './styles.module.css'
 
 const BASE = '/p/void'
 
-// ---- Floating Particles ----
-function Particles() {
+// ---- Terminal Loader ----
+const BOOT_LINES = [
+  { text: 'ARTOSPHERED ARCHIVE v2.6.0', delay: 0 },
+  { text: 'INITIALIZING CULTURAL DATABASE...', delay: 120 },
+  { text: 'LOADING INDEX: 120 ENTRIES FOUND', delay: 260 },
+  { text: 'CROSS-REF: 8 CITIES / 5 CATEGORIES', delay: 420 },
+  { text: 'MOUNTING EVENT LOG...', delay: 580 },
+  { text: 'ESTABLISHING READ CONTEXT: EST. 2024', delay: 740 },
+  { text: 'ARCHIVE READY.', delay: 900 },
+]
+
+function TerminalLoader({ onDone }) {
+  const [visibleLines, setVisibleLines] = useState([])
+  const [progress, setProgress] = useState(0)
+  const [done, setDone] = useState(false)
+  const [exit, setExit] = useState(false)
+
+  useEffect(() => {
+    // Stop lenis during loader
+    if (window.__lenis) window.__lenis.stop()
+
+    const timers = []
+
+    BOOT_LINES.forEach((line, i) => {
+      timers.push(
+        setTimeout(() => {
+          setVisibleLines(v => [...v, line.text])
+          setProgress(Math.round(((i + 1) / BOOT_LINES.length) * 100))
+        }, line.delay)
+      )
+    })
+
+    timers.push(
+      setTimeout(() => {
+        setDone(true)
+      }, 1100)
+    )
+
+    timers.push(
+      setTimeout(() => {
+        setExit(true)
+        if (window.__lenis) window.__lenis.start()
+        onDone()
+      }, 1600)
+    )
+
+    return () => {
+      timers.forEach(t => clearTimeout(t))
+      if (window.__lenis) window.__lenis.start()
+    }
+  }, [onDone])
+
   return (
-    <div className={s.particles} aria-hidden="true">
-      {Array.from({ length: 18 }).map((_, i) => (
-        <span
-          key={i}
-          className={s.particle}
-          style={{
-            left: `${Math.random() * 100}%`,
-            animationDuration: `${8 + Math.random() * 12}s`,
-            animationDelay: `${Math.random() * 10}s`,
-            width: i % 4 === 0 ? '3px' : '2px',
-            height: i % 4 === 0 ? '3px' : '2px',
-          }}
-        />
-      ))}
-    </div>
+    <motion.div
+      className={s.loader}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: exit ? 0 : 1 }}
+      transition={{ duration: 0.35, ease: 'easeIn' }}
+      aria-label="Loading archive"
+      aria-live="polite"
+    >
+      <div className={s.loaderInner}>
+        <div className={s.loaderHeader}>
+          <span className={s.loaderBrand}>ARTOSPHERED</span>
+          <span className={s.loaderVersion}>ARCHIVE SYSTEM</span>
+        </div>
+
+        <div className={s.loaderTerminal}>
+          {visibleLines.map((line, i) => (
+            <motion.div
+              key={i}
+              className={s.loaderLine}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              <span className={s.loaderPrompt}>&gt;&nbsp;</span>
+              <span>{line}</span>
+            </motion.div>
+          ))}
+          {!done && (
+            <div className={s.loaderLine}>
+              <span className={s.loaderPrompt}>&gt;&nbsp;</span>
+              <span className={s.loaderCursor}>_</span>
+            </div>
+          )}
+        </div>
+
+        <div className={s.loaderProgressWrap}>
+          <div className={s.loaderProgressTrack}>
+            <motion.div
+              className={s.loaderProgressFill}
+              initial={{ width: '0%' }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            />
+          </div>
+          <div className={s.loaderProgressMeta}>
+            <span>INDEXING</span>
+            <span className={s.loaderProgressNum}>{progress}%</span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
 // ---- Nav ----
-function Nav({ wallet, onWalletToggle }) {
+function Nav() {
   const location = useLocation()
   const [open, setOpen] = useState(false)
 
-  // Close overlay on navigation
   useEffect(() => { setOpen(false) }, [location.pathname])
 
-  // Body scroll lock
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [open])
 
-  const links = [
-    { to: BASE, label: 'Home', end: true },
-    { to: `${BASE}/drops`, label: 'Drops' },
-    { to: `${BASE}/roadmap`, label: 'Roadmap' },
-    { to: `${BASE}/team`, label: 'Team' },
-    { to: `${BASE}/mint`, label: 'Mint' },
-  ]
-
-  const walletLabel = wallet.connected
-    ? `${wallet.address.slice(0, 4)}…${wallet.address.slice(-4)}`
-    : 'Connect Wallet'
+  const links = NAV.map(n => ({
+    to: n.path ? `${BASE}/${n.path}` : BASE,
+    label: n.label,
+    end: !!n.end,
+  }))
 
   return (
     <>
       <nav className={s.nav}>
         <div className={s.navInner}>
-          <Link to={BASE} className={s.navLogo}>VOID</Link>
+          <Link to={BASE} className={s.navLogo}>
+            <span className={s.navLogoMark}>ARC</span>
+            <span className={s.navLogoSub}>HIVE</span>
+          </Link>
 
           <div className={s.navLinks}>
             {links.map(({ to, label, end }) => (
@@ -76,18 +159,8 @@ function Nav({ wallet, onWalletToggle }) {
           <div className={s.navSpacer} />
 
           <Link to="/" className={s.navBack}>
-            <span>↩</span> ARTOSPHERED
+            <span>&#8617;</span> ARTOSPHERED
           </Link>
-
-          <button className={s.walletBtn} onClick={onWalletToggle}>
-            {wallet.connected && <span className={s.walletDot} />}
-            {walletLabel}
-            {wallet.connected && (
-              <span style={{ fontFamily: 'inherit', fontSize: 10, opacity: 0.7, marginLeft: 2 }}>
-                {wallet.balance} ETH
-              </span>
-            )}
-          </button>
 
           <button
             className={`${s.hamburger} ${open ? s.hamburgerOpen : ''}`}
@@ -101,9 +174,11 @@ function Nav({ wallet, onWalletToggle }) {
         </div>
       </nav>
 
-      {/* Mobile Overlay */}
       <div className={`${s.mobileOverlay} ${open ? s.mobileOverlayOpen : ''}`} role="dialog" aria-modal="true">
-        {links.map(({ to, label, end }) => (
+        <div className={s.mobileOverlayHeader}>
+          <span className={s.mobileOverlayLabel}>NAVIGATION</span>
+        </div>
+        {links.map(({ to, label, end }, i) => (
           <NavLink
             key={to}
             to={to}
@@ -112,17 +187,11 @@ function Nav({ wallet, onWalletToggle }) {
               isActive ? `${s.mobileNavLink} ${s.mobileNavLinkActive}` : s.mobileNavLink
             }
           >
+            <span className={s.mobileNavIdx}>{String(i + 1).padStart(2, '0')}</span>
             {label}
           </NavLink>
         ))}
-        <button
-          className={`${s.walletBtn} ${s.mobileWalletBtn}`}
-          onClick={() => { onWalletToggle(); setOpen(false) }}
-        >
-          {wallet.connected && <span className={s.walletDot} />}
-          {walletLabel}
-        </button>
-        <Link to="/" className={s.mobileBackLink}>↩ ARTOSPHERED</Link>
+        <Link to="/" className={s.mobileBackLink}>&#8617; ARTOSPHERED</Link>
       </div>
     </>
   )
@@ -133,58 +202,105 @@ function Footer() {
   return (
     <footer className={s.footer}>
       <div className={s.footerInner}>
-        <div>
-          <div className={s.footerLogo}>VOID</div>
-          <div className={s.footerTagline}>Own the future. Own the void.</div>
-          <div className={s.footerContract}>
-            Contract: 0x4a3B…d0c8 &nbsp;·&nbsp; ERC-721A
+        <div className={s.footerLeft}>
+          <div className={s.footerLogo}>ARTOSPHERED</div>
+          <div className={s.footerTagline}>{BRAND.tagline}</div>
+          <div className={s.footerMeta}>
+            <span>EST. {BRAND.est}</span>
+            <span className={s.footerDot} />
+            <span>{BRAND.cities.length} CITIES</span>
+            <span className={s.footerDot} />
+            <span>CULTURAL ARCHIVE</span>
           </div>
         </div>
-        <div className={s.footerLinks}>
-          <a href="#" className={s.footerLink}>OpenSea</a>
-          <a href="#" className={s.footerLink}>Etherscan</a>
-          <a href="#" className={s.footerLink}>Discord</a>
-          <a href="#" className={s.footerLink}>Twitter / X</a>
-          <a href="#" className={s.footerLink}>Whitepaper</a>
+        <div className={s.footerRight}>
+          <div className={s.footerNav}>
+            {NAV.map(n => (
+              <Link
+                key={n.path}
+                to={n.path ? `${BASE}/${n.path}` : BASE}
+                className={s.footerLink}
+              >
+                {n.label}
+              </Link>
+            ))}
+          </div>
+          <div className={s.footerContact}>
+            <a href={`mailto:${BRAND.email}`} className={s.footerLink}>{BRAND.email}</a>
+            <a href={BRAND.instagramUrl} className={s.footerLink} target="_blank" rel="noopener noreferrer">
+              {BRAND.instagram}
+            </a>
+          </div>
         </div>
       </div>
       <div className={s.footerBottom}>
-        <span>© 2026 VOID GENESIS — All rights reserved</span>
-        <span>Built on Ethereum &nbsp;·&nbsp; Audited by CertiK &nbsp;·&nbsp; IPFS Metadata</span>
+        <span className={s.footerCopy}>&copy; 2026 ARTOSPHERED &mdash; ALL RIGHTS RESERVED</span>
+        <span className={s.footerBottomTag}>CULTURE, CATALOGUED</span>
       </div>
     </footer>
   )
 }
 
+// ---- Page transition variants ----
+const pageVariants = {
+  initial: { opacity: 0, clipPath: 'inset(0 0 100% 0)' },
+  animate: { opacity: 1, clipPath: 'inset(0 0 0% 0)' },
+  exit:    { opacity: 0, clipPath: 'inset(0 0 0% 0)' },
+}
+
+const pageTransition = {
+  duration: 0.45,
+  ease: [0.83, 0, 0.17, 1],
+}
+
 // ---- Layout ----
+const LOADER_KEY = 'void-archive-loaded'
+
 export default function Layout() {
   useReveal()
-
-  const [wallet, setWallet] = useState({
-    connected: false,
-    address: '',
-    balance: '',
+  const location = useLocation()
+  const [loaderDone, setLoaderDone] = useState(() => {
+    // Show loader only once per session
+    return typeof sessionStorage !== 'undefined' && sessionStorage.getItem(LOADER_KEY) === '1'
   })
 
-  const toggleWallet = useCallback(() => {
-    setWallet(w =>
-      w.connected
-        ? { connected: false, address: '', balance: '' }
-        : {
-            connected: true,
-            address: '0x7F3c9A2E8d4B1f0e6C5a7D9b3F2e8A4c1B6d0a45E',
-            balance: '2.847',
-          }
-    )
-  }, [])
+  const handleLoaderDone = () => {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(LOADER_KEY, '1')
+    }
+    setLoaderDone(true)
+  }
+
+  // Respect reduced motion — skip loader
+  const prefersReduced =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const showLoader = !loaderDone && !prefersReduced
 
   return (
     <div className={s.root}>
-      <div className={s.layout}>
-        <Particles />
-        <Nav wallet={wallet} onWalletToggle={toggleWallet} />
+      <AnimatePresence>
+        {showLoader && (
+          <TerminalLoader key="loader" onDone={handleLoaderDone} />
+        )}
+      </AnimatePresence>
+
+      <div className={s.layout} style={{ visibility: showLoader ? 'hidden' : 'visible' }}>
+        <Nav />
         <main className={s.main}>
-          <Outlet context={{ wallet, toggleWallet }} />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
         <Footer />
       </div>

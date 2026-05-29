@@ -19,7 +19,7 @@ export default function PreviewCard({ preview, index = 0 }) {
       />
       <div className="ag-card-glow" />
       <span className="ag-card-open" aria-hidden>↗</span>
-      <span className="ag-card-kind">{kind}</span>
+      <span className="ag-card-kind">{preview.no ? `Direction ${preview.no} · ` : ''}{kind}</span>
       <h3 className="ag-card-name">{name}</h3>
       <p className="ag-card-blurb">{blurb}</p>
       <div className="ag-card-tags">

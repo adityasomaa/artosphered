@@ -1,22 +1,99 @@
 import { useEffect, useState } from 'react'
 import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useReveal } from '../../shared/useReveal'
 import { BASE } from './data'
+import { BRAND, NAV as CONTENT_NAV } from '../../shared/content'
 import s from './styles.module.css'
 
-const NAV = [
-  { to: `${BASE}/collections`, label: 'Collections' },
-  { to: `${BASE}/lookbook`, label: 'Lookbook' },
-  { to: `${BASE}/about`, label: 'Maison' },
-  { to: `${BASE}/contact`, label: 'Contact' },
-]
+/* ── Loader ─────────────────────────────────────────────────── */
+const prefersReducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+function Loader({ onDone }) {
+  return (
+    <motion.div
+      className={s.loaderWrap}
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      aria-hidden="true"
+    >
+      {/* Wordmark slides up */}
+      <div className={s.loaderWordmark}>
+        <motion.span
+          className={s.loaderWordmarkInner}
+          initial={{ y: '110%' }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        >
+          ARTOSPHERED
+        </motion.span>
+      </div>
+
+      {/* Issue line fades in */}
+      <motion.p
+        className={s.loaderIssue}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.55, duration: 0.4 }}
+      >
+        Issue 01 &nbsp;/&nbsp; 2026
+      </motion.p>
+
+      {/* Rule draws across */}
+      <div className={s.loaderRuleWrap}>
+        <motion.div
+          className={s.loaderRuleLine}
+          initial={{ width: 0 }}
+          animate={{ width: '100%' }}
+          transition={{ delay: 0.7, duration: 0.5, ease: 'easeInOut' }}
+        />
+      </div>
+
+      {/* Tagline */}
+      <motion.p
+        className={s.loaderTagline}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.0, duration: 0.4 }}
+      >
+        {BRAND.tagline}
+      </motion.p>
+    </motion.div>
+  )
+}
+
+/* ── Nav items ────────────────────────────────────────────────── */
+const NAV = CONTENT_NAV.map((n) => ({
+  to: n.path === '' ? BASE : `${BASE}/${n.path}`,
+  label: n.label,
+  end: !!n.end,
+}))
+
+/* ── Layout ───────────────────────────────────────────────────── */
 export default function Layout() {
   useReveal()
   const [open, setOpen] = useState(false)
-  const { pathname } = useLocation()
+  const [loaded, setLoaded] = useState(false)
+  const location = useLocation()
 
-  useEffect(() => { setOpen(false) }, [pathname])
+  /* First-load loader */
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setLoaded(true)
+      return
+    }
+    if (window.__lenis) window.__lenis.stop()
+    const t = setTimeout(() => {
+      setLoaded(true)
+      if (window.__lenis) window.__lenis.start()
+    }, 1450)
+    return () => clearTimeout(t)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => { setOpen(false) }, [location.pathname])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -31,18 +108,26 @@ export default function Layout() {
 
   return (
     <div className={s.atelier}>
+      {/* ── First-load loader ───────────────────────────── */}
+      <AnimatePresence>
+        {!loaded && !prefersReducedMotion && (
+          <Loader key="loader" onDone={() => setLoaded(true)} />
+        )}
+      </AnimatePresence>
+
+      {/* ── Header ──────────────────────────────────────── */}
       <header className={s.header}>
         <Link to={BASE} className={s.brand}>
-          AT<em>E</em>LIER
+          ARTOSPHERED
         </Link>
 
         <nav className={s.navLinks}>
           {NAV.map((n) => (
-            <NavLink key={n.label} to={n.to} className={linkClass}>
+            <NavLink key={n.label} to={n.to} end={n.end} className={linkClass}>
               {n.label}
             </NavLink>
           ))}
-          <Link to="/" className={s.backLink}>↩ ARTOSPHERED</Link>
+          <Link to="/" className={s.backLink}>&#8617; ARTOSPHERED</Link>
         </nav>
 
         <button
@@ -58,6 +143,7 @@ export default function Layout() {
         </button>
       </header>
 
+      {/* ── Mobile overlay ──────────────────────────────── */}
       <div
         className={open ? `${s.overlay} ${s.overlayOpen}` : s.overlay}
         aria-hidden={!open}
@@ -66,6 +152,7 @@ export default function Layout() {
           <NavLink
             key={n.label}
             to={n.to}
+            end={n.end}
             className={overlayClass}
             style={{ transitionDelay: `${0.07 * i + 0.08}s` }}
           >
@@ -77,12 +164,24 @@ export default function Layout() {
           className={s.overlayBack}
           style={{ transitionDelay: `${0.07 * NAV.length + 0.08}s` }}
         >
-          ↩ Back to ARTOSPHERED
+          &#8617; Back to ARTOSPHERED
         </Link>
       </div>
 
+      {/* ── Page transitions ────────────────────────────── */}
       <main className={s.main}>
-        <Outlet />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={location.pathname}
+            className={s.pageTransition}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? false : { opacity: 0, y: -10 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <Footer />
@@ -90,38 +189,37 @@ export default function Layout() {
   )
 }
 
+/* ── Footer ─────────────────────────────────────────────────── */
 function Footer() {
   return (
     <footer className={s.footer}>
       <div className={s.footTop}>
         <div className={s.footBrand}>
-          AT<em>E</em>LIER
+          ARTOSPHERED
         </div>
         <div className={s.footCols}>
           <div className={s.footCol}>
-            <h5>Maison</h5>
-            <Link to={`${BASE}/collections`}>Collections</Link>
-            <Link to={`${BASE}/lookbook`}>Lookbook FW26</Link>
-            <Link to={`${BASE}/about`}>Our Story</Link>
-            <Link to={`${BASE}/contact`}>Book an Appointment</Link>
+            <h5>Navigate</h5>
+            {NAV.map((n) => (
+              <Link key={n.label} to={n.to}>{n.label}</Link>
+            ))}
           </div>
           <div className={s.footCol}>
             <h5>Contact</h5>
-            <a href="mailto:maison@atelier.co">maison@atelier.co</a>
-            <p>+33 4 72 00 00 00</p>
-            <p>Lyon · London · New York</p>
+            <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
+            <a href={BRAND.instagramUrl} target="_blank" rel="noreferrer">{BRAND.instagram}</a>
           </div>
           <div className={s.footCol}>
-            <h5>Follow</h5>
-            <a href="#instagram" onClick={(e) => e.preventDefault()}>Instagram</a>
-            <a href="#pinterest" onClick={(e) => e.preventDefault()}>Pinterest</a>
-            <a href="#editorial" onClick={(e) => e.preventDefault()}>Editorial Archive</a>
+            <h5>Cities</h5>
+            {BRAND.cities.slice(0, 5).map((c) => (
+              <p key={c}>{c}</p>
+            ))}
           </div>
         </div>
       </div>
       <div className={s.footBottom}>
-        <span>© {new Date().getFullYear()} ATELIER. All rights reserved.</span>
-        <span>Crafted with intention — since 1987.</span>
+        <span>&#169; {new Date().getFullYear()} ARTOSPHERED. All rights reserved.</span>
+        <span>Archiving since {BRAND.est}.</span>
       </div>
     </footer>
   )

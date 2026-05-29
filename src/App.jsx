@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import ScrollToTop from './shared/ScrollToTop'
+import SmoothScroll from './shared/SmoothScroll'
+import IntroLoader from './shared/IntroLoader'
 
 // Agency shell (the proposal site clients land on first)
 import AgencyLayout from './agency/AgencyLayout'
@@ -40,7 +41,8 @@ function Loader() {
 export default function App() {
   return (
     <>
-      <ScrollToTop />
+      <IntroLoader />
+      <SmoothScroll />
       <Suspense fallback={<Loader />}>
         <Routes>
           {/* ---------- ARTOSPHERED agency shell ---------- */}

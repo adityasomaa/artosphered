@@ -1,22 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BASE } from './data'
+import { BRAND, CONTACT } from '../../shared/content'
 import s from './styles.module.css'
-
-const SHOOT_TYPES = [
-  'Portrait session',
-  'Wedding — full day',
-  'Wedding — half day',
-  'Commercial / brand',
-  'Editorial / magazine',
-  'Other / not sure yet',
-]
 
 const initialForm = {
   name: '',
   email: '',
-  shootType: '',
-  date: '',
+  topic: '',
   message: '',
 }
 
@@ -29,8 +20,8 @@ export default function Contact() {
     const e = {}
     if (!form.name.trim()) e.name = 'Please enter your name'
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Please enter a valid email'
-    if (!form.shootType) e.shootType = 'Please select a shoot type'
-    if (!form.message.trim()) e.message = 'Please tell us a little about your project'
+    if (!form.topic) e.topic = 'Please select a topic'
+    if (!form.message.trim()) e.message = 'Please tell us a bit about what you have in mind'
     return e
   }
 
@@ -44,39 +35,39 @@ export default function Contact() {
     e.preventDefault()
     const e2 = validate()
     if (Object.keys(e2).length) { setErrors(e2); return }
-    // Demo: simulate send
     setSent(true)
   }
 
   return (
     <>
-      {/* PAGE HEADER */}
       <div className={s.pageHead}>
         <p className={s.eyebrow} data-reveal>Get in touch</p>
         <h1 data-reveal>
-          Let's make something <em>together.</em>
+          {/* no apostrophe — use entity */}
+          Let&#39;s talk<em>.</em>
         </h1>
       </div>
 
       <section className={s.section} style={{ paddingTop: 0 }}>
+        <p className={s.lead} data-reveal>{CONTACT.blurb}</p>
+
         <div className={s.contactGrid}>
-          {/* FORM COLUMN */}
+          {/* FORM */}
           <div>
             {sent ? (
               <div className={s.success} data-reveal>
-                <div className={s.mark}>✓</div>
-                <h3>Message sent.</h3>
+                <div className={s.mark}>&#10003;</div>
+                <h3>Message received.</h3>
                 <p>
-                  Thank you — we'll review your enquiry and be in touch within
-                  one working day. In the meantime, take a look at the work.
+                  We read every message personally. You&#39;ll hear from us within one
+                  working day &#8212; usually sooner.
                 </p>
-                <Link to={`${BASE}/portfolio`} className={s.btn}>
-                  View the portfolio
+                <Link to={`${BASE}/culture-report`} className={s.btn}>
+                  Read the archive
                 </Link>
               </div>
             ) : (
               <form className={s.form} onSubmit={handleSubmit} noValidate>
-                {/* Name + Email */}
                 <div className={s.fieldRow}>
                   <div className={s.field}>
                     <label htmlFor="name">Full name</label>
@@ -116,49 +107,35 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {/* Shoot type + Date */}
-                <div className={s.fieldRow}>
-                  <div className={s.field}>
-                    <label htmlFor="shootType">Type of shoot</label>
-                    <select
-                      id="shootType"
-                      name="shootType"
-                      value={form.shootType}
-                      onChange={handleChange}
-                      aria-invalid={!!errors.shootType}
-                    >
-                      <option value="">Select…</option>
-                      {SHOOT_TYPES.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                    {errors.shootType && (
-                      <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
-                        {errors.shootType}
-                      </span>
-                    )}
-                  </div>
-                  <div className={s.field}>
-                    <label htmlFor="date">Preferred date</label>
-                    <input
-                      id="date"
-                      name="date"
-                      type="date"
-                      value={form.date}
-                      onChange={handleChange}
-                    />
-                  </div>
+                <div className={s.field}>
+                  <label htmlFor="topic">Topic</label>
+                  <select
+                    id="topic"
+                    name="topic"
+                    value={form.topic}
+                    onChange={handleChange}
+                    aria-invalid={!!errors.topic}
+                  >
+                    <option value="">Select a topic&#8230;</option>
+                    {CONTACT.topics.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                  {errors.topic && (
+                    <span style={{ fontSize: 12, color: 'var(--gold)', marginTop: 4 }}>
+                      {errors.topic}
+                    </span>
+                  )}
                 </div>
 
-                {/* Message */}
                 <div className={s.field}>
-                  <label htmlFor="message">Tell us about your project</label>
+                  <label htmlFor="message">Message</label>
                   <textarea
                     id="message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    placeholder="Location, mood, number of people, anything that comes to mind — the more we know, the better we can help."
+                    placeholder="A story pitch, an event you want covered, a project you have in mind&#8230;"
                     aria-invalid={!!errors.message}
                   />
                   {errors.message && (
@@ -170,88 +147,64 @@ export default function Contact() {
 
                 <div>
                   <button type="submit" className={`${s.btn} ${s.btnFilled}`}>
-                    Send enquiry
+                    Send message
                   </button>
                 </div>
 
                 <p style={{ fontSize: 12, color: 'var(--muted)', margin: 0 }}>
-                  We respond to every enquiry personally, usually within 24 hours.
-                  For urgent requests call{' '}
-                  <a href="tel:+14155550192" style={{ color: 'var(--cream-dim)', textDecoration: 'none' }}>
-                    +1 (415) 555 0192
-                  </a>
-                  .
+                  We respond personally to every message. No bots, no auto-replies.
                 </p>
               </form>
             )}
           </div>
 
-          {/* INFO COLUMN */}
+          {/* INFO */}
           <div className={s.studioInfo} data-reveal data-reveal-delay="120">
             <div className={s.infoBlock}>
               <h4>Email</h4>
               <p>
-                <a href="mailto:hello@lumenstudio.co">hello@lumenstudio.co</a>
+                <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
               </p>
             </div>
-
             <div className={s.infoBlock}>
-              <h4>Phone</h4>
+              <h4>Instagram</h4>
               <p>
-                <a href="tel:+14155550192">+1 (415) 555 0192</a>
+                <a
+                  href={BRAND.instagramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {BRAND.instagram}
+                </a>
               </p>
             </div>
-
             <div className={s.infoBlock}>
-              <h4>Studio hours</h4>
+              <h4>Cities we cover</h4>
               <p>
-                Monday – Friday · 9 am – 6 pm PST<br />
-                Weekends: shoot days &amp; emergencies only
+                {BRAND.cities.map((c, i) => (
+                  <span key={c}>
+                    {c}{i < BRAND.cities.length - 1 ? ' · ' : ''}
+                  </span>
+                ))}
               </p>
             </div>
-
             <div className={s.infoBlock}>
-              <h4>Location</h4>
+              <h4>What we accept</h4>
               <p>
-                San Francisco, CA — available worldwide.<br />
-                We travel for the work.
+                Story pitches &middot; Event invitations &middot; Brand
+                partnerships &middot; Creative commissions
               </p>
             </div>
-
-            <div className={s.infoBlock}>
-              <h4>Response time</h4>
-              <p>
-                We reply to every message within one working day. Wedding
-                enquiries for peak-season dates (May – October) fill fast —
-                reach out early.
-              </p>
-            </div>
-
             <img
               className={s.mapImg}
-              src="https://picsum.photos/seed/lumen-map-sf/680/340"
-              alt="Studio location — San Francisco"
+              src="https://picsum.photos/seed/aro-contact-img/680/340"
+              alt="ARTOSPHERED &#8212; global cultural archive"
               loading="lazy"
               width="680"
               height="340"
             />
           </div>
         </div>
-      </section>
-
-      {/* BOTTOM CTA */}
-      <section className={s.cta}>
-        <img
-          className={s.ctaBg}
-          src="https://picsum.photos/seed/lumen-contact-bg/1920/800"
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-        />
-        <p className={s.eyebrow} data-reveal style={{ justifyContent: 'center' }}>We're booking now</p>
-        <h2 className={s.ctaTitle} data-reveal>
-          Ready to start?<br /><em>So are we.</em>
-        </h2>
       </section>
     </>
   )

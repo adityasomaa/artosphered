@@ -4,4 +4,12 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // Ensure a single React instance — prevents "Invalid hook call" from
+  // framer-motion's AnimatePresence when deps are pre-bundled separately.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react/jsx-runtime', 'framer-motion', 'lenis'],
+  },
 })

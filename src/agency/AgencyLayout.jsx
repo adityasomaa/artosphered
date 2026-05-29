@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useReveal } from '../shared/useReveal'
 import './agency.css'
 
@@ -73,7 +74,17 @@ export default function AgencyLayout() {
       </nav>
 
       <main>
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <Footer />
@@ -98,19 +109,17 @@ function Footer() {
               <Link to="/contact">Contact</Link>
             </div>
             <div className="ag-footer-col">
-              <h4>Demos</h4>
-              <Link to="/p/lumen">Lumen</Link>
-              <Link to="/p/prisma">Prisma</Link>
-              <Link to="/p/pulse">Pulse</Link>
-              <Link to="/p/atelier">Atelier</Link>
-              <Link to="/p/void">Void</Link>
+              <h4>Directions</h4>
+              <Link to="/p/atelier">01 · Editorial</Link>
+              <Link to="/p/prisma">02 · Prism</Link>
+              <Link to="/p/lumen">03 · Monolith</Link>
+              <Link to="/p/pulse">04 · Frequency</Link>
+              <Link to="/p/void">05 · Archive</Link>
             </div>
             <div className="ag-footer-col">
               <h4>Connect</h4>
-              <a href="mailto:hello@artosphered.com">Email</a>
-              <a href="#" onClick={(e) => e.preventDefault()}>Instagram</a>
-              <a href="#" onClick={(e) => e.preventDefault()}>Dribbble</a>
-              <a href="#" onClick={(e) => e.preventDefault()}>LinkedIn</a>
+              <a href="mailto:artosphered@gmail.com">artosphered@gmail.com</a>
+              <a href="https://instagram.com/artosphered" target="_blank" rel="noopener noreferrer">@artosphered</a>
             </div>
           </div>
         </div>

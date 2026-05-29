@@ -1,101 +1,34 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  FESTIVAL_DATE,
-  FESTIVAL_INFO,
-  ARTISTS,
-  MARQUEE,
-} from './data'
+import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content'
 import s from './styles.module.css'
 
 const BASE = '/p/pulse'
 
-// --- countdown ---
-function useCountdown(targetISO) {
-  const [diff, setDiff] = useState(() => calcDiff(targetISO))
-
-  useEffect(() => {
-    const id = setInterval(() => setDiff(calcDiff(targetISO)), 1000)
-    return () => clearInterval(id)
-  }, [targetISO])
-
-  return diff
-}
-
-function calcDiff(targetISO) {
-  const ms = new Date(targetISO) - Date.now()
-  if (ms <= 0) return { days: 0, hours: 0, mins: 0, secs: 0 }
-  const secs = Math.floor(ms / 1000)
-  return {
-    days: Math.floor(secs / 86400),
-    hours: Math.floor((secs % 86400) / 3600),
-    mins: Math.floor((secs % 3600) / 60),
-    secs: secs % 60,
-  }
-}
-
-function pad(n) {
-  return String(n).padStart(2, '0')
-}
-
-// gallery items
-const GALLERY = [
-  { seed: 'pulse-g1', w: 400, h: 300, cls: '' },
-  { seed: 'pulse-g2', w: 400, h: 600, cls: s.gTall },
-  { seed: 'pulse-g3', w: 800, h: 300, cls: s.gWide },
-  { seed: 'pulse-g4', w: 400, h: 300, cls: '' },
-  { seed: 'pulse-g5', w: 800, h: 300, cls: s.gWide },
-  { seed: 'pulse-g6', w: 400, h: 300, cls: '' },
-  { seed: 'pulse-g7', w: 400, h: 300, cls: '' },
+/* marquee content: pillars + cities interleaved */
+const MARQUEE_ITEMS = [
+  ...BRAND.pillars,
+  ...BRAND.cities,
+  ...BRAND.pillars,
+  ...BRAND.cities,
 ]
 
-const HEADLINERS = ARTISTS.filter((a) => a.headliner)
+const FEATURED_ARTICLES = ARTICLES.slice(0, 3)
+const FEATURED_EVENTS = EVENTS.slice(0, 3)
 
 export default function Home() {
-  const { days, hours, mins, secs } = useCountdown(FESTIVAL_DATE)
-
-  // marquee: duplicate for seamless loop
-  const marqueeItems = [...MARQUEE, ...MARQUEE]
-
   return (
     <>
       {/* HERO */}
       <section className={s.hero}>
         <div className={s.wrap}>
-          <span className={s.heroKicker}>Aug 15 – 17 · Lisbon, Portugal</span>
-          <h1 className={`${s.heroTitle} ${s.display}`}>PULSE</h1>
-          <div className={s.heroMeta}>
-            <span>
-              <span className={s.heroDot} />
-              {FESTIVAL_INFO.dates}
-            </span>
-            <span>
-              <span className={s.heroDot} style={{ background: 'var(--cyan)' }} />
-              {FESTIVAL_INFO.location}
-            </span>
-            <span>
-              <span className={s.heroDot} style={{ background: 'var(--violet)' }} />
-              12 Artists · 4 Stages
-            </span>
-          </div>
+          <span className={s.heroKicker}>{BRAND.intersect}</span>
+          <h1 className={`${s.heroTitle} ${s.display}`}>
+            {BRAND.heroLine1}<br />{BRAND.heroLine2}
+          </h1>
+          <p className={s.heroMission}>{BRAND.mission}</p>
           <div className={s.heroCtas}>
-            <Link to={`${BASE}/tickets`} className={s.btn}>Get Tickets</Link>
-            <Link to={`${BASE}/lineup`} className={`${s.btn} ${s.btnGhost}`}>Full Lineup</Link>
-          </div>
-
-          {/* Countdown */}
-          <div className={s.countdown} aria-label="Countdown to festival">
-            {[
-              { val: days, label: 'Days' },
-              { val: hours, label: 'Hours' },
-              { val: mins, label: 'Mins' },
-              { val: secs, label: 'Secs' },
-            ].map(({ val, label }) => (
-              <div key={label} className={s.countCell}>
-                <div className={s.countNum}>{pad(val)}</div>
-                <div className={s.countLabel}>{label}</div>
-              </div>
-            ))}
+            <Link to={`${BASE}/culture-report`} className={s.btn}>Explore the Archive</Link>
+            <Link to={`${BASE}/events`} className={`${s.btn} ${s.btnGhost}`}>Event Coverage</Link>
           </div>
         </div>
       </section>
@@ -103,91 +36,156 @@ export default function Home() {
       {/* MARQUEE */}
       <div className={s.marquee} aria-hidden="true">
         <div className={s.marqueeTrack}>
-          {marqueeItems.map((name, i) => (
-            <span key={`${name}-${i}`}>
-              {i % 3 === 1 ? <em>{name}</em> : name}
+          {MARQUEE_ITEMS.map((item, i) => (
+            <span key={`${item}-${i}`}>
+              {i % 4 === 1 ? <em>{item}</em> : item}
             </span>
           ))}
         </div>
       </div>
 
-      {/* HEADLINERS */}
+      {/* FEATURED ARTICLES */}
       <section className={s.section}>
         <div className={s.wrap}>
           <div className={`${s.sectionHead} ${s.reveal}`} data-reveal>
-            <div className={s.eyebrow}>Headliners</div>
-            <h2 className={s.sectionTitle}>This Year's Main Acts</h2>
+            <div className={s.eyebrow}>Culture Report</div>
+            <h2 className={s.sectionTitle}>Latest Dispatches</h2>
             <p className={s.sectionSub}>
-              Three nights, three legends. Nova Raye, Delta Wave, and Phantom 808 headline
-              Meridian Fields' biggest stage — expect full-throttle sets that shake the ground.
+              Long-form features and field notes from the cities where culture moves fastest.
             </p>
           </div>
-          <div className={s.headliners}>
-            {HEADLINERS.map((a, i) => (
-              <div
+          <div className={s.articleGrid}>
+            {FEATURED_ARTICLES.map((a, i) => (
+              <Link
                 key={a.id}
-                className={`${s.headCard} ${s.reveal}`}
+                to={`${BASE}/culture-report`}
+                className={`${s.articleCard} ${s.reveal}`}
                 data-reveal
-                data-reveal-delay={i * 100}
+                data-reveal-delay={i * 80}
               >
-                <img
-                  src={`https://picsum.photos/seed/${a.seed}/600/750`}
-                  alt={a.name}
-                  loading="lazy"
-                  width={600}
-                  height={750}
-                />
-                <div className={s.headCaption}>
-                  <div className={s.tag}>{a.day} · {a.stage}</div>
-                  <h3>{a.name}</h3>
+                <div className={s.articleImg}>
+                  <img
+                    src={`https://picsum.photos/seed/${a.seed}/600/400`}
+                    alt={a.title}
+                    loading="lazy"
+                    width={600}
+                    height={400}
+                    sizes="(max-width: 860px) 100vw, 33vw"
+                  />
                 </div>
-              </div>
+                <div className={s.articleBody}>
+                  <div className={s.articleMeta}>
+                    <span className={s.articleCat}>{a.cat}</span>
+                    <span className={s.articleCity}>{a.city}</span>
+                  </div>
+                  <h3 className={s.articleTitle}>{a.title}</h3>
+                  <p className={s.articleExcerpt}>{a.excerpt}</p>
+                  <div className={s.articleFoot}>
+                    <span>{a.date}</span>
+                    <span>{a.read} read</span>
+                  </div>
+                </div>
+              </Link>
             ))}
+          </div>
+          <div className={s.sectionCta}>
+            <Link to={`${BASE}/culture-report`} className={`${s.btn} ${s.btnGhost}`}>
+              All Stories &#x2192;
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* GALLERY */}
-      <section className={s.section} style={{ paddingTop: 0 }}>
+      {/* MARQUEE 2 — reversed */}
+      <div className={`${s.marquee} ${s.marqueeReverse}`} aria-hidden="true">
+        <div className={`${s.marqueeTrack} ${s.marqueeTrackReverse}`}>
+          {[...BRAND.cities, ...BRAND.pillars, ...BRAND.cities, ...BRAND.pillars].map((item, i) => (
+            <span key={`rev-${item}-${i}`}>
+              {i % 3 === 2 ? <em>{item}</em> : item}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* STATS */}
+      <section className={s.section}>
         <div className={s.wrap}>
-          <div className={`${s.sectionHead} ${s.reveal}`} data-reveal>
-            <div className={s.eyebrow}>Atmosphere</div>
-            <h2 className={s.sectionTitle}>Feel the Energy</h2>
-          </div>
-          <div className={s.gallery}>
-            {GALLERY.map((g, i) => (
+          <div className={s.statsGrid}>
+            {STATS.map((st, i) => (
               <div
-                key={g.seed}
-                className={`${s.galleryItem} ${g.cls} ${s.reveal}`}
+                key={st.label}
+                className={`${s.statCell} ${s.reveal}`}
                 data-reveal
                 data-reveal-delay={i * 60}
               >
-                <img
-                  src={`https://picsum.photos/seed/${g.seed}/${g.w}/${g.h}`}
-                  alt={`Festival atmosphere ${i + 1}`}
-                  loading="lazy"
-                  width={g.w}
-                  height={g.h}
-                />
+                <div className={s.statNum}>{st.num}</div>
+                <div className={s.statLabel}>{st.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA BAND */}
+      {/* FEATURED EVENTS */}
+      <section className={s.section} style={{ paddingTop: 0 }}>
+        <div className={s.wrap}>
+          <div className={`${s.sectionHead} ${s.reveal}`} data-reveal>
+            <div className={s.eyebrow}>Event Coverage</div>
+            <h2 className={s.sectionTitle}>On the Ground</h2>
+            <p className={s.sectionSub}>
+              We document shows, launches, and happenings across cities — before, during and after.
+            </p>
+          </div>
+          <div className={s.eventGrid}>
+            {FEATURED_EVENTS.map((ev, i) => (
+              <Link
+                key={ev.id}
+                to={`${BASE}/events`}
+                className={`${s.eventCard} ${s.reveal}`}
+                data-reveal
+                data-reveal-delay={i * 80}
+              >
+                <div className={s.eventImg}>
+                  <img
+                    src={`https://picsum.photos/seed/${ev.seed}/600/360`}
+                    alt={ev.name}
+                    loading="lazy"
+                    width={600}
+                    height={360}
+                    sizes="(max-width: 860px) 100vw, 33vw"
+                  />
+                  <span className={ev.status === 'Covered' ? `${s.evBadge} ${s.evBadgeCovered}` : s.evBadge}>
+                    {ev.status}
+                  </span>
+                </div>
+                <div className={s.eventBody}>
+                  <div className={s.eventTag}>{ev.tag} &mdash; {ev.city}</div>
+                  <h3 className={s.eventName}>{ev.name}</h3>
+                  <p className={s.eventExcerpt}>{ev.excerpt}</p>
+                  <div className={s.eventDate}>{ev.date}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className={s.sectionCta}>
+            <Link to={`${BASE}/events`} className={`${s.btn} ${s.btnGhost}`}>
+              All Events &#x2192;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT CTA BAND */}
       <section className={s.section} style={{ paddingTop: 0 }}>
         <div className={s.wrap}>
           <div className={`${s.ctaBand} ${s.reveal}`} data-reveal>
-            <div className={s.eyebrow}>Limited Availability</div>
-            <h2>Secure Your Place Now</h2>
-            <p>
-              Every tier from Day Pass to Backstage. Prices rise as the festival
-              approaches — lock in your pass today before they're gone.
-            </p>
-            <Link to={`${BASE}/tickets`} className={s.btn}>
-              View Tickets & Prices
-            </Link>
+            <div className={s.eyebrow}>Work With Us</div>
+            <h2>Pitch. Invite. Collaborate.</h2>
+            <p>{BRAND.mission}</p>
+            <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to={`${BASE}/contact`} className={s.btn}>Get in Touch</Link>
+              <Link to={`${BASE}/services`} className={`${s.btn} ${s.btnGhost}`}>Creative Services</Link>
+            </div>
           </div>
         </div>
       </section>

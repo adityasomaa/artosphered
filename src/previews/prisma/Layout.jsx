@@ -1,17 +1,25 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useReveal } from '../../shared/useReveal'
+import { BRAND, NAV } from '../../shared/content.js'
 import s from './styles.module.css'
 
 const BASE = '/p/prisma'
 
-const NAV_LINKS = [
-  { to: `${BASE}`, label: 'Home', end: true },
-  { to: `${BASE}/exhibitions`, label: 'Exhibitions' },
-  { to: `${BASE}/artists`, label: 'Artists' },
-  { to: `${BASE}/visit`, label: 'Visit' },
-  { to: `${BASE}/contact`, label: 'Tickets & Contact' },
-]
+const NAV_LINKS = NAV.map(({ path, label, end }) => ({
+  to: path ? `${BASE}/${path}` : BASE,
+  label,
+  end,
+}))
+
+const pageVariants = {
+  initial: { opacity: 0, filter: 'blur(14px)', scale: 0.98 },
+  animate: { opacity: 1, filter: 'blur(0px)', scale: 1 },
+  exit: { opacity: 0, filter: 'blur(14px)', scale: 0.98 },
+}
+
+const pageTransition = { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
 
 export default function Layout() {
   useReveal()
@@ -19,22 +27,15 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
 
-  // Close menu on route change
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
 
-  // Body scroll lock when menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
-  // Close on Escape
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') setMenuOpen(false)
   }, [])
@@ -62,8 +63,11 @@ export default function Layout() {
             {/* Brand */}
             <Link to={BASE} className={s.brand}>
               <span className={s.brandMark} aria-hidden="true" />
-              PRISMA
-              <span className={s.brandSub}>Contemporary Art</span>
+              <span>
+                <span style={{ color: 'var(--p-accent)' }}>{BRAND.wordmark[0]}</span>
+                {BRAND.wordmark[1]}
+              </span>
+              <span className={s.brandSub}>Cultural Archive</span>
             </Link>
 
             {/* Desktop links */}
@@ -84,7 +88,7 @@ export default function Layout() {
 
             {/* Right side */}
             <div className={s.navRight}>
-              <Link to="/" className={s.backLink}>↩ ARTOSPHERED</Link>
+              <Link to="/" className={s.backLink}>&#x21A9; ARTOSPHERED</Link>
               <button
                 className={s.burger + (menuOpen ? ' ' + s.burgerOpen : '')}
                 onClick={() => setMenuOpen((v) => !v)}
@@ -111,7 +115,7 @@ export default function Layout() {
             onClick={() => setMenuOpen(false)}
             aria-label="Close menu"
           >
-            ✕
+            &#x2715;
           </button>
           {NAV_LINKS.map(({ to, label, end }) => (
             <NavLink
@@ -126,12 +130,23 @@ export default function Layout() {
               {label}
             </NavLink>
           ))}
-          <Link to="/" className={s.overlayBack}>↩ Back to ARTOSPHERED</Link>
+          <Link to="/" className={s.overlayBack}>&#x21A9; Back to ARTOSPHERED</Link>
         </div>
 
-        {/* Page content */}
+        {/* Page content — framer-motion glassy transitions */}
         <main className={s.main} id="main-content">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         {/* Footer */}
@@ -142,10 +157,10 @@ export default function Layout() {
               <div>
                 <div className={s.footerBrand}>
                   <span className={s.brandMark} style={{ display: 'inline-block', marginRight: 10 }} aria-hidden="true" />
-                  PRISMA
+                  <span style={{ color: 'var(--p-accent)' }}>ART</span>OSPHERED
                 </div>
                 <p style={{ color: 'var(--p-muted)', fontSize: '0.9rem', marginTop: 14, maxWidth: '28ch', lineHeight: 1.7 }}>
-                  A contemporary art gallery at the intersection of new media, material practice and speculative futures.
+                  {BRAND.tagline}. Documenting creative culture since {BRAND.est}.
                 </p>
               </div>
 
@@ -157,22 +172,22 @@ export default function Layout() {
                 ))}
               </div>
 
-              {/* Info col */}
+              {/* Connect col */}
               <div className={s.footerCol}>
-                <h5>Visit</h5>
-                <span>14 Aperture Mews</span>
-                <span>London, EC1V 7ND</span>
-                <span style={{ marginTop: 10 }}>Tue – Sun, 10:00 – 19:00</span>
-                <a href="mailto:hello@prismagallery.art" style={{ marginTop: 10 }}>
-                  hello@prismagallery.art
+                <h5>Connect</h5>
+                <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a>
+                <a href={BRAND.instagramUrl} target="_blank" rel="noopener noreferrer">
+                  {BRAND.instagram}
                 </a>
-                <a href="tel:+442071234567">+44 207 123 4567</a>
+                <span style={{ marginTop: 10 }}>
+                  {BRAND.cities.slice(0, 4).join(' / ')}
+                </span>
               </div>
             </div>
 
             <div className={s.footerBottom}>
-              <span>© 2026 PRISMA Gallery. All rights reserved.</span>
-              <span>A demo by ARTOSPHERED</span>
+              <span>&copy; {BRAND.est}&ndash;2026 {BRAND.name}. All rights reserved.</span>
+              <span>{BRAND.intersect}.</span>
             </div>
           </div>
         </footer>

@@ -1,21 +1,12 @@
 import { useState } from 'react'
+import { BRAND, CONTACT } from '../../shared/content'
 import s from './styles.module.css'
-
-const ENQUIRY_TYPES = [
-  'Made-to-order Appointment',
-  'Private Shopping',
-  'Press & Editorial',
-  'Wholesale Enquiry',
-  'Repair & Restoration',
-  'General Enquiry',
-]
 
 export default function Contact() {
   const [form, setForm] = useState({
     name: '',
     email: '',
-    enquiryType: '',
-    preferredDate: '',
+    topic: '',
     message: '',
   })
   const [submitted, setSubmitted] = useState(false)
@@ -25,8 +16,8 @@ export default function Contact() {
     const e = {}
     if (!form.name.trim()) e.name = 'Please enter your name.'
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Please enter a valid email.'
-    if (!form.enquiryType) e.enquiryType = 'Please select an enquiry type.'
-    if (!form.message.trim()) e.message = 'Please include a message.'
+    if (!form.topic) e.topic = 'Please select a topic.'
+    if (!form.message.trim()) e.message = 'Please add a message.'
     return e
   }
 
@@ -38,62 +29,88 @@ export default function Contact() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    const e2 = validate()
-    if (Object.keys(e2).length) {
-      setErrors(e2)
+    const errs = validate()
+    if (Object.keys(errs).length) {
+      setErrors(errs)
       return
     }
     setSubmitted(true)
   }
 
   return (
-    <div className={s.contactPage}>
-      {/* ── Left: form ─────────────────────────────────── */}
-      <div className={s.contactRight}>
+    <div className={s.aroContactPage}>
+      {/* ── Left: brand info ─────────────────────────────── */}
+      <div className={s.aroContactLeft}>
         <p className={s.sectionEyebrow} data-reveal="fade">Get in Touch</p>
-        <h1 className={s.pageTitle} data-reveal style={{ fontSize: 'clamp(2rem, 3vw, 3rem)', marginBottom: '8px' }}>
-          Book an<br />Appointment
+        <h1 className={s.aroContactLeftTitle} data-reveal>
+          We read<br />everything.
         </h1>
-        <p className={s.pageSub} data-reveal data-reveal-delay="80" style={{ marginBottom: '40px' }}>
-          Every ATELIER client is received by appointment. We do not believe in
-          browsing. We believe in conversation, and in finding the right piece
-          for the right person.
+        <p className={s.aroContactLeftBlurb} data-reveal data-reveal-delay="80">
+          {CONTACT.blurb}
         </p>
+
+        <div className={s.aroContactDetails} data-reveal data-reveal-delay="120">
+          <div className={s.aroContactDetailItem}>
+            <div className={s.aroContactDetailLabel}>Email</div>
+            <a href={`mailto:${BRAND.email}`} className={s.aroContactDetailValue}>
+              {BRAND.email}
+            </a>
+          </div>
+          <div className={s.aroContactDetailItem}>
+            <div className={s.aroContactDetailLabel}>Instagram</div>
+            <a
+              href={BRAND.instagramUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={s.aroContactDetailValue}
+            >
+              {BRAND.instagram}
+            </a>
+          </div>
+          <div className={s.aroContactDetailItem}>
+            <div className={s.aroContactDetailLabel}>Established</div>
+            <span className={s.aroContactDetailValue}>{BRAND.est}</span>
+          </div>
+        </div>
+
+        <div className={s.aroContactCities} data-reveal data-reveal-delay="160">
+          {BRAND.cities.map((city) => (
+            <span key={city} className={s.aroContactCityChip}>{city}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Right: form ──────────────────────────────────── */}
+      <div className={s.aroContactRight}>
+        <p className={s.sectionEyebrow} data-reveal="fade">Send a Message</p>
 
         {submitted ? (
           <div className={s.contactSuccess} data-reveal="fade">
-            <span className={s.successCheck} aria-hidden="true">◆</span>
-            <h3>We will be in touch.</h3>
+            <span className={s.successCheck} aria-hidden="true">&#9670;</span>
+            <h3>Message received.</h3>
             <p>
-              Your enquiry has been received. One of our maison team will
-              respond within one working day to confirm your appointment and
-              discuss your requirements.
+              Thank you for reaching out. We read everything and will be in touch
+              shortly.
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} noValidate data-reveal data-reveal-delay="100">
+          <form onSubmit={handleSubmit} noValidate data-reveal data-reveal-delay="80">
             <div className={s.formRow}>
-              <FormGroup
-                label="Full Name"
-                error={errors.name}
-              >
+              <FormGroup label="Your Name" error={errors.name}>
                 <input
                   type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
                   className={s.formInput}
-                  placeholder="Your name"
+                  placeholder="Full name"
                   autoComplete="name"
                   aria-required="true"
                   aria-invalid={!!errors.name}
                 />
               </FormGroup>
 
-              <FormGroup
-                label="Email Address"
-                error={errors.email}
-              >
+              <FormGroup label="Email Address" error={errors.email}>
                 <input
                   type="email"
                   name="email"
@@ -108,46 +125,29 @@ export default function Contact() {
               </FormGroup>
             </div>
 
-            <FormGroup
-              label="Nature of Enquiry"
-              error={errors.enquiryType}
-            >
+            <FormGroup label="Topic" error={errors.topic}>
               <select
-                name="enquiryType"
-                value={form.enquiryType}
+                name="topic"
+                value={form.topic}
                 onChange={handleChange}
                 className={s.formSelect}
                 aria-required="true"
-                aria-invalid={!!errors.enquiryType}
+                aria-invalid={!!errors.topic}
               >
-                <option value="">Select enquiry type</option>
-                {ENQUIRY_TYPES.map((t) => (
+                <option value="">Select a topic</option>
+                {CONTACT.topics.map((t) => (
                   <option key={t} value={t}>{t}</option>
                 ))}
               </select>
             </FormGroup>
 
-            <FormGroup label="Preferred Date (optional)">
-              <input
-                type="date"
-                name="preferredDate"
-                value={form.preferredDate}
-                onChange={handleChange}
-                className={s.formInput}
-                min={new Date().toISOString().split('T')[0]}
-              />
-            </FormGroup>
-
-            <FormGroup
-              label="Your Message"
-              error={errors.message}
-            >
+            <FormGroup label="Message" error={errors.message}>
               <textarea
                 name="message"
                 value={form.message}
                 onChange={handleChange}
                 className={s.formTextarea}
-                placeholder="Tell us what brings you to ATELIER, and how we can help."
+                placeholder="Tell us what you have in mind."
                 rows={5}
                 aria-required="true"
                 aria-invalid={!!errors.message}
@@ -155,86 +155,10 @@ export default function Contact() {
             </FormGroup>
 
             <button type="submit" className={s.contactSubmit}>
-              Send Enquiry
+              Send Message
             </button>
           </form>
         )}
-      </div>
-
-      {/* ── Right: boutique addresses ──────────────────── */}
-      <div className={s.contactLeft}>
-        <p className={s.sectionEyebrow} data-reveal="fade">Find Us</p>
-        <h2 className={s.sectionTitle} data-reveal style={{ marginBottom: '48px' }}>
-          Our Maisons
-        </h2>
-
-        <div className={s.boutiqueList}>
-          {[
-            {
-              city: 'Lyon',
-              address: '14 Rue Auguste Comte\n69002 Lyon, France',
-              hours: 'Mon–Sat: 10:00–18:30\nSun: Closed',
-              phone: '+33 4 72 00 00 00',
-              tag: 'Maison Principale',
-            },
-            {
-              city: 'London',
-              address: '32 Mount Street\nMayfair, London W1K 2SH',
-              hours: 'Mon–Sat: 10:00–18:00\nSun: 12:00–17:00',
-              phone: '+44 20 7000 0000',
-              tag: 'London Boutique',
-            },
-            {
-              city: 'New York',
-              address: '814 Madison Avenue\nNew York, NY 10065',
-              hours: 'Mon–Sat: 10:00–18:00\nSun: 12:00–17:00',
-              phone: '+1 212 000 0000',
-              tag: 'New York Maison',
-            },
-          ].map((b, i) => (
-            <div key={b.city} className={s.boutique} data-reveal data-reveal-delay={i * 80}>
-              <p
-                style={{
-                  fontSize: '0.62rem',
-                  letterSpacing: '0.25em',
-                  textTransform: 'uppercase',
-                  color: 'var(--gold)',
-                  margin: '0 0 6px',
-                }}
-              >
-                {b.tag}
-              </p>
-              <h4>{b.city}</h4>
-              <p style={{ whiteSpace: 'pre-line' }}>{b.address}</p>
-              <div className={s.boutiqueDivider} />
-              <p style={{ whiteSpace: 'pre-line', fontSize: '0.82rem' }}>{b.hours}</p>
-              <p style={{ marginTop: '6px' }}>
-                <a
-                  href={`tel:${b.phone.replace(/\s/g, '')}`}
-                  style={{ color: 'var(--ink-muted)', textDecoration: 'none', fontSize: '0.85rem' }}
-                >
-                  {b.phone}
-                </a>
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className={s.pressContact} data-reveal>
-          <h5>Press & Editorial</h5>
-          <a href="mailto:press@atelier.co">press@atelier.co</a>
-          <p
-            style={{
-              fontSize: '0.82rem',
-              color: 'var(--ink-muted)',
-              marginTop: '6px',
-              lineHeight: 1.6,
-            }}
-          >
-            For editorial requests, image permissions, and press appointments.
-            We respond to press enquiries within two working days.
-          </p>
-        </div>
       </div>
     </div>
   )

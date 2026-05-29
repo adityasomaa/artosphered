@@ -1,16 +1,6 @@
 import { useState } from 'react'
-import { FAQ, SOCIALS } from './data'
+import { BRAND, CONTACT } from '../../shared/content'
 import s from './styles.module.css'
-
-const TOPICS = [
-  'General Enquiry',
-  'Ticket Support',
-  'Press & Media',
-  'Artist Bookings',
-  'Sponsorship',
-  'Accessibility',
-  'Volunteering',
-]
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
@@ -47,39 +37,35 @@ export default function Contact() {
       <div className={s.wrap}>
         <div className={`${s.sectionHead} ${s.reveal}`} data-reveal>
           <div className={s.eyebrow}>Get in Touch</div>
-          <h1 className={s.sectionTitle}>Contact Us</h1>
-          <p className={s.sectionSub}>
-            Questions, press passes, accessibility needs, partnership enquiries —
-            we want to hear from you. Our team typically replies within 2 working days.
-          </p>
+          <h1 className={s.sectionTitle}>Contact</h1>
+          <p className={s.sectionSub}>{CONTACT.blurb}</p>
         </div>
 
         <div className={s.contactLayout}>
           {/* Form column */}
-          <div className={`${s.reveal}`} data-reveal>
+          <div className={s.reveal} data-reveal>
             {submitted ? (
               <div className={s.success}>
                 <div
-                  style={{
-                    fontSize: '3rem',
-                    marginBottom: 16,
-                    filter: 'drop-shadow(0 0 14px var(--cyan))',
-                  }}
+                  style={{ fontSize: '3rem', marginBottom: 16, filter: 'drop-shadow(0 0 14px var(--cyan))' }}
                   aria-hidden="true"
                 >
-                  ◉
+                  &#x25CE;
                 </div>
                 <h3>Message received.</h3>
                 <p>
-                  Thanks for reaching out, {form.name.split(' ')[0]}. Our team will
-                  respond to <strong style={{ color: 'var(--ink)' }}>{form.email}</strong> within
-                  2 working days. See you on the dancefloor.
+                  Thanks for reaching out, {form.name.split(' ')[0]}. We read everything and will
+                  get back to you at{' '}
+                  <strong style={{ color: 'var(--ink)' }}>{form.email}</strong>.
                 </p>
                 <button
                   type="button"
                   className={s.btn}
                   style={{ marginTop: 22 }}
-                  onClick={() => { setSubmitted(false); setForm({ name: '', email: '', topic: '', message: '' }) }}
+                  onClick={() => {
+                    setSubmitted(false)
+                    setForm({ name: '', email: '', topic: '', message: '' })
+                  }}
                 >
                   Send Another Message
                 </button>
@@ -132,8 +118,8 @@ export default function Contact() {
                     onChange={handleChange}
                     style={errors.topic ? { borderColor: 'var(--hot)' } : {}}
                   >
-                    <option value="">Select a topic…</option>
-                    {TOPICS.map((t) => (
+                    <option value="">Select a topic&#x2026;</option>
+                    {CONTACT.topics.map((t) => (
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
@@ -148,7 +134,7 @@ export default function Contact() {
                     id="cf-message"
                     name="message"
                     className={s.textarea}
-                    placeholder="Tell us what's on your mind…"
+                    placeholder="Tell us what you have in mind&#x2026;"
                     value={form.message}
                     onChange={handleChange}
                     style={errors.message ? { borderColor: 'var(--hot)' } : {}}
@@ -158,9 +144,7 @@ export default function Contact() {
                   )}
                 </div>
 
-                <button type="submit" className={s.btn}>
-                  Send Message
-                </button>
+                <button type="submit" className={s.btn}>Send Message</button>
               </form>
             )}
           </div>
@@ -168,49 +152,41 @@ export default function Contact() {
           {/* Info column */}
           <div>
             <div className={`${s.infoCard} ${s.reveal}`} data-reveal>
-              <h3>Venue</h3>
+              <h3>Direct</h3>
               <p>
-                <strong style={{ color: 'var(--ink)' }}>Meridian Fields</strong><br />
-                Parque das Nações, Lisbon, Portugal<br />
-                15 min from Lisbon Oriente station.<br />
-                Shuttle buses run every 20 min from the city centre.
+                <a
+                  href={`mailto:${BRAND.email}`}
+                  style={{ color: 'var(--cyan)', textDecoration: 'underline' }}
+                >
+                  {BRAND.email}
+                </a>
+                <br />
+                <a
+                  href={BRAND.instagramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: 'var(--cyan)', textDecoration: 'underline' }}
+                >
+                  {BRAND.instagram}
+                </a>
               </p>
             </div>
 
             <div className={`${s.infoCard} ${s.reveal}`} data-reveal data-reveal-delay="100">
-              <h3>Press & Media</h3>
-              <p>
-                Accredited press can apply via the form (select "Press &amp; Media").
-                Accreditation opens 30 days before the festival. Photographer guidelines
-                and hi-res assets available on request.
-              </p>
+              <h3>Cities We Cover</h3>
+              <div className={s.socials} style={{ marginTop: 12 }}>
+                {BRAND.cities.map((city) => (
+                  <span key={city} className={s.socialChip}>{city}</span>
+                ))}
+              </div>
             </div>
 
             <div className={`${s.infoCard} ${s.reveal}`} data-reveal data-reveal-delay="180">
-              <h3>FAQ</h3>
-              {FAQ.map((item) => (
-                <div key={item.q} className={s.faqItem}>
-                  <div className={s.faqQ}>{item.q}</div>
-                  <div className={s.faqA}>{item.a}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className={`${s.infoCard} ${s.reveal}`} data-reveal data-reveal-delay="240">
-              <h3>Follow PULSE</h3>
-              <div className={s.socials} style={{ marginTop: 12 }}>
-                {SOCIALS.map((sc) => (
-                  <a
-                    key={sc.label}
-                    href="#social"
-                    className={s.socialChip}
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <strong>{sc.label}</strong>
-                    {sc.handle}
-                  </a>
-                ))}
-              </div>
+              <h3>What We Do</h3>
+              <p>
+                Editorial storytelling, event documentation, creative direction, and community
+                partnerships. We work with brands, institutions and independent creators.
+              </p>
             </div>
           </div>
         </div>

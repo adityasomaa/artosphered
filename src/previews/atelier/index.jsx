@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import Home from './Home'
-import Collections from './Collections'
-import Lookbook from './Lookbook'
-import About from './About'
+import CultureReport from './CultureReport'
+import Events from './Events'
+import Services from './Services'
 import Contact from './Contact'
 
 export default function AtelierApp() {
@@ -11,9 +11,9 @@ export default function AtelierApp() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="" element={<Home />} />
-        <Route path="collections" element={<Collections />} />
-        <Route path="lookbook" element={<Lookbook />} />
-        <Route path="about" element={<About />} />
+        <Route path="culture-report" element={<CultureReport />} />
+        <Route path="events" element={<Events />} />
+        <Route path="services" element={<Services />} />
         <Route path="contact" element={<Contact />} />
         <Route path="*" element={<Home />} />
       </Route>

@@ -1,172 +1,78 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content'
 import { BASE } from './data'
 import s from './styles.module.css'
 
 const MARQUEE_ITEMS = [
-  'Handcrafted',
-  'Sustainable',
-  'Made-to-order',
-  'Ethical Sourcing',
-  'Lifetime Repair',
-  'Single-origin Fibres',
-  'Artisan Heritage',
-  'Zero Landfill',
+  'Culture Report',
+  'Art & Design',
+  'Event Coverage',
+  'City Dispatches',
+  'Fashion',
+  'Emerging Movements',
+  'Cultural Archive',
+  'Global Perspectives',
 ]
 
 export default function Home() {
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
-
-  function handleSubscribe(e) {
-    e.preventDefault()
-    if (email.trim()) {
-      setSubscribed(true)
-      setEmail('')
-    }
-  }
-
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS]
+  const featuredArticles = ARTICLES.slice(0, 3)
+  const featuredEvents = EVENTS.slice(0, 3)
 
   return (
     <>
-      {/* ── Hero ──────────────────────────────────────────── */}
-      <section className={s.hero} aria-label="Hero">
-        <div className={s.heroLeft}>
-          <p className={s.heroEyebrow} data-reveal="fade">Fall / Winter 2026</p>
-          <h1 className={s.heroTitle} data-reveal>
-            The Art of<br />
-            <em>Quiet</em><br />
-            Dressing.
-          </h1>
-          <p className={s.heroManifesto} data-reveal data-reveal-delay="100">
-            We believe clothing should outlast seasons, outlast trends, outlast
-            the moment of purchase. Every ATELIER piece is made once, made
-            completely, and made to be worn for decades.
+      {/* ── Hero ─────────────────────────────────────────── */}
+      <section className={s.aroHero} aria-label="Hero">
+        <div className={s.aroHeroLeft}>
+          <p className={s.aroHeroVol} data-reveal="fade">
+            Vol. I &nbsp;&#183;&nbsp; Est. {BRAND.est}
           </p>
-          <div className={s.heroActions} data-reveal data-reveal-delay="180">
-            <Link to={`${BASE}/collections`} className={s.btnPrimary}>
-              Explore FW26
+          <p className={s.aroHeroEyebrow} data-reveal="fade">
+            {BRAND.intersect}
+          </p>
+          <h1 className={s.aroHeroHeadline} data-reveal>
+            {BRAND.heroLine1}<br />
+            <em>{BRAND.heroLine2}</em>
+          </h1>
+          <div className={s.aroHeroRule} aria-hidden="true" />
+          <p className={s.aroHeroMission} data-reveal data-reveal-delay="80">
+            {BRAND.mission}
+          </p>
+          <div className={s.aroHeroCtas} data-reveal data-reveal-delay="150">
+            <Link to={`${BASE}/culture-report`} className={s.btnPrimary}>
+              Culture Report
             </Link>
-            <Link to={`${BASE}/lookbook`} className={s.btnGhost}>
-              View Lookbook
+            <Link to={`${BASE}/events`} className={s.btnGhost}>
+              Event Coverage
             </Link>
           </div>
         </div>
-
-        <div className={s.heroRight}>
+        <div className={s.aroHeroRight}>
           <img
-            src="https://picsum.photos/seed/atelier-hero-fw26/900/1200"
-            alt="ATELIER FW26 — editorial hero look"
+            src="https://picsum.photos/seed/aro-home-hero/900/1100"
+            alt="ARTOSPHERED — cultural archive editorial"
             width={900}
-            height={1200}
+            height={1100}
             loading="eager"
           />
-          <span className={s.heroSeasonTag}>FW26 — Fragments of Silence</span>
-        </div>
-      </section>
-
-      {/* ── Featured Collection split ─────────────────────── */}
-      <section className={s.featuredSplit} aria-label="Featured Collection">
-        <div className={s.featuredMedia}>
-          <img
-            src="https://picsum.photos/seed/atelier-featured-1/800/900"
-            alt="Camel overcoat — featured piece"
-            width={800}
-            height={900}
-            loading="lazy"
-          />
-        </div>
-        <div className={s.featuredBody}>
-          <p className={s.sectionEyebrow} data-reveal="fade">Featured — Outerwear</p>
-          <h2 className={s.sectionTitle} data-reveal>
-            The Coat as<br />Architecture
-          </h2>
-          <p className={s.sectionBody} data-reveal data-reveal-delay="80">
-            Our double-faced camel hair overcoat begins with fleece selected
-            personally in Outer Mongolia. It is woven at a family mill outside
-            Biella, then cut and constructed over six weeks by a single tailor
-            at our Lyon atelier.
-          </p>
-          <p className={s.sectionBody} data-reveal data-reveal-delay="140" style={{ marginBottom: 0, marginTop: '-16px' }}>
-            The result is a coat that holds its shape across decades — one that
-            improves with wear, softening at the collar and sleeve, acquiring
-            character it could never have left the atelier with.
-          </p>
-          <div data-reveal data-reveal-delay="200" style={{ marginTop: '40px' }}>
-            <Link to={`${BASE}/collections`} className={s.btnPrimary}>
-              Shop Outerwear
-            </Link>
+          <div className={s.aroHeroCaption}>
+            ARTOSPHERED &nbsp;&#183;&nbsp; {BRAND.tagline}
           </div>
         </div>
       </section>
 
-      {/* ── Second split (reversed) ───────────────────────── */}
-      <section className={s.featuredSplit} aria-label="Knitwear Feature">
-        <div className={`${s.featuredBody} ${s.reverse}`}>
-          <p className={s.sectionEyebrow} data-reveal="fade">FW26 — Knitwear</p>
-          <h2 className={s.sectionTitle} data-reveal>
-            Warmth as<br />
-            Philosophy
-          </h2>
-          <p className={s.sectionBody} data-reveal data-reveal-delay="80">
-            Our knitwear programme draws from a single source: a family flock
-            of Shetland sheep on a 400-acre island farm. The fleece is sheared
-            once a year, sorted by hand, and spun in our own mill. From sheep
-            to shoulder, every yard of yarn carries provenance.
-          </p>
-          <div data-reveal data-reveal-delay="160" style={{ marginTop: '40px' }}>
-            <Link to={`${BASE}/collections`} className={s.btnSecondary}>
-              View Knitwear
-            </Link>
+      {/* ── Three pillars ────────────────────────────────── */}
+      <div className={s.aroPillars} aria-label="Our pillars">
+        {BRAND.pillars.map((pillar, i) => (
+          <div key={pillar} className={s.aroPillar} data-reveal data-reveal-delay={i * 80}>
+            <span className={s.aroPillarNum}>0{i + 1}</span>
+            <div className={s.aroPillarRule} />
+            <p className={s.aroPillarTitle}>{pillar}</p>
           </div>
-        </div>
-        <div className={s.featuredMedia}>
-          <img
-            src="https://picsum.photos/seed/atelier-knit-hero/800/900"
-            alt="Ribbed cashmere turtleneck editorial"
-            width={800}
-            height={900}
-            loading="lazy"
-          />
-        </div>
-      </section>
+        ))}
+      </div>
 
-      {/* ── Editorial story ───────────────────────────────── */}
-      <section className={s.editorial} aria-label="Our Approach">
-        <div>
-          <h2 className={s.editorialLabel} data-reveal="left">
-            How we<br />make<br />things.
-          </h2>
-        </div>
-        <div className={s.editorialContent}>
-          {[
-            {
-              title: 'The Cloth',
-              body: 'We source every fibre with the maker in mind and the wearer in mind after that. No blend obscures origins. No material is chosen for cost alone. If we cannot trace the fleece to a specific farm or the silk to a specific reel, we do not use it.',
-            },
-            {
-              title: 'The Cut',
-              body: 'Every pattern is drawn by hand in our Lyon maison. We cut in pairs — no assembly-line logic here. Each piece is cut by the person who will construct it, a practice that has vanished from almost every other house.',
-            },
-            {
-              title: 'The Finish',
-              body: 'Seams are pressed individually. Hems are weighted by hand. The inside of an ATELIER garment receives the same attention as the outside, because we believe what you do not see shapes what you feel.',
-            },
-            {
-              title: 'The After',
-              body: 'Every piece we sell is covered by our Lifetime Repair Programme. When a coat wears at the elbow, when a seam loosens after fifteen years, send it back. We will restore it. No charge. No question.',
-            },
-          ].map((item) => (
-            <div key={item.title} className={s.editorialItem} data-reveal>
-              <h4>{item.title}</h4>
-              <p>{item.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Marquee ───────────────────────────────────────── */}
+      {/* ── Marquee ──────────────────────────────────────── */}
       <div className={s.marqueeWrap} aria-hidden="true">
         <div className={s.marqueeTrack}>
           {doubled.map((item, i) => (
@@ -175,41 +81,104 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Newsletter ────────────────────────────────────── */}
-      <section className={s.newsletter} aria-label="Newsletter">
-        <p className={s.sectionEyebrow} data-reveal="fade">Letters from the Atelier</p>
-        <h2 className={s.sectionTitle} data-reveal style={{ color: 'var(--ivory)' }}>
-          The Private List
+      {/* ── Featured articles ────────────────────────────── */}
+      <section className={s.aroArticleStrip} aria-label="Latest from Culture Report">
+        <div className={s.aroStripHeader} data-reveal>
+          <h2 className={s.aroStripTitle}>Culture Report</h2>
+          <Link to={`${BASE}/culture-report`} className={s.btnGhost}>
+            All Stories
+          </Link>
+        </div>
+        <div className={s.aroArticleGrid}>
+          {featuredArticles.map((article, i) => (
+            <Link
+              key={article.id}
+              to={`${BASE}/culture-report`}
+              className={s.aroArticleCard}
+              data-reveal
+              data-reveal-delay={i * 80}
+            >
+              <div className={`${s.aroArticleCardImg}${i === 0 ? ` ${s.tall}` : ''}`}>
+                <img
+                  src={`https://picsum.photos/seed/${article.seed}/${i === 0 ? '700/900' : '600/400'}`}
+                  alt={article.title}
+                  width={i === 0 ? 700 : 600}
+                  height={i === 0 ? 900 : 400}
+                  loading="lazy"
+                />
+              </div>
+              <p className={s.aroArticleCat}>
+                {article.cat} &nbsp;&#183;&nbsp; {article.city}
+              </p>
+              <h3 className={`${s.aroArticleCardTitle}${i === 0 ? ` ${s.large}` : ''}`}>
+                {article.title}
+              </h3>
+              <p className={s.aroArticleMeta}>{article.read} &nbsp;&#183;&nbsp; {article.date}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Events teaser ────────────────────────────────── */}
+      <section className={s.aroEventTeaser} aria-label="Event Coverage">
+        <div className={s.aroEventTeaserInner}>
+          <div className={s.aroEventTeaserHead} data-reveal>
+            <p className={s.sectionEyebrow}>Event Coverage</p>
+            <h2 className={s.aroEventTeaserTitle}>On the Ground</h2>
+            <Link to={`${BASE}/events`} className={s.btnSecondary} style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'var(--ivory)' }}>
+              All Events
+            </Link>
+          </div>
+          <div className={s.aroEventList}>
+            {featuredEvents.map((ev, i) => (
+              <div key={ev.id} className={s.aroEventRow} data-reveal data-reveal-delay={i * 70}>
+                <p className={s.aroEventRowTag}>{ev.tag}</p>
+                <div>
+                  <p className={s.aroEventRowName}>{ev.name}</p>
+                  <p className={s.aroEventRowMeta}>{ev.city} &nbsp;&#183;&nbsp; {ev.date}</p>
+                </div>
+                <span className={`${s.aroEventRowStatus} ${ev.status === 'Upcoming' ? s.upcoming : s.covered}`}>
+                  {ev.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats ────────────────────────────────────────── */}
+      <div className={s.aroStats} aria-label="By the numbers">
+        <div className={s.aroStatsInner}>
+          {STATS.map((st, i) => (
+            <div key={st.label} className={s.aroStatItem} data-reveal data-reveal-delay={i * 70}>
+              <div className={s.aroStatNum}>{st.num}</div>
+              <div className={s.aroStatLabel}>{st.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Contact CTA ──────────────────────────────────── */}
+      <section className={s.aroCtaBand} aria-label="Contact">
+        <p className={s.sectionEyebrow} data-reveal="fade">Get in Touch</p>
+        <h2 className={s.aroCtaBandTitle} data-reveal>
+          Pitch a Story. Cover an Event.
         </h2>
-        <p className={s.sectionBody} data-reveal data-reveal-delay="80">
-          Seasonal notes on craft, material, and new work. Invitations to
-          private appointments and events. No more than four letters a year.
+        <p className={s.aroCtaBandSub} data-reveal data-reveal-delay="80">
+          We read everything. If you have a story, an event, or a creative project
+          you want to build with us, we want to hear it.
         </p>
-        {subscribed ? (
-          <p className={s.newsletterSuccess} data-reveal="fade">
-            Thank you — your first letter will arrive with the season.
-          </p>
-        ) : (
-          <form
-            className={s.newsletterForm}
-            onSubmit={handleSubscribe}
-            data-reveal
-            data-reveal-delay="120"
-          >
-            <input
-              type="email"
-              placeholder="Your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={s.newsletterInput}
-              required
-              aria-label="Email address"
-            />
-            <button type="submit" className={s.newsletterBtn}>
-              Subscribe
-            </button>
-          </form>
-        )}
+        <div className={s.aroCtaBandLinks} data-reveal data-reveal-delay="120">
+          <Link to={`${BASE}/contact`} className={s.btnPrimary}>
+            Contact Us
+          </Link>
+          <a href={`mailto:${BRAND.email}`} className={s.aroCtaLink}>
+            {BRAND.email}
+          </a>
+          <a href={BRAND.instagramUrl} target="_blank" rel="noreferrer" className={s.aroCtaLink}>
+            {BRAND.instagram}
+          </a>
+        </div>
       </section>
     </>
   )

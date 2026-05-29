@@ -1225,9 +1225,172 @@
   .ticketRow { flex-direction: column; align-items: flex-start; }
 }
 
+/* ---------- Pillar tiles (Home) ---------- */
+.pillarTile {
+  padding: 32px 28px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius);
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.pillarTile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glass-shadow-lg);
+}
+.pillarIcon {
+  font-size: 2rem;
+  display: block;
+  line-height: 1;
+}
+
+/* ---------- Services page ---------- */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.servicePanel {
+  position: relative;
+  padding: 34px 28px 30px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.servicePanel:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--glass-shadow-lg);
+}
+.servicePanelAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.7;
+}
+.serviceNumber {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.5;
+}
+.serviceItems {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  display: grid;
+  gap: 8px;
+}
+.serviceItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: var(--p-muted);
+}
+.serviceItemDot {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+/* ---------- PRISM Loader ---------- */
+.loaderRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--p-bg);
+  overflow: hidden;
+}
+
+.loaderShard {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.loaderCenter {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  overflow: hidden;
+  padding: 40px 60px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 80px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Light sweep (refraction effect) */
+.loaderSweep {
+  position: absolute;
+  inset-block: 0;
+  width: 60%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(155, 231, 255, 0.18) 40%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(182, 155, 255, 0.18) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.loaderWordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.loaderArt {
+  background: linear-gradient(110deg, var(--p-accent), var(--p-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.loaderSphered {
+  color: var(--p-ink);
+}
+
+.loaderTagline {
+  margin-top: 10px;
+  font-family: var(--font-grotesk);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--p-muted);
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .blob1, .blob2, .blob3, .blob4 { animation: none; }
   .modal, .modalBackdrop { animation: none; }
   .card:hover, .artistCard:hover { transform: none; }
+  /* Skip loader entirely if user prefers reduced motion */
+  .loaderRoot { display: none !important; }
 }

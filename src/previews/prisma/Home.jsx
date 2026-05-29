@@ -1,19 +1,33 @@
 import { Link } from 'react-router-dom'
-import { FEATURED, EXHIBITIONS, ARTISTS } from './data.js'
+import { BRAND, ARTICLES, EVENTS, STATS } from '../../shared/content.js'
 import s from './styles.module.css'
 
 const BASE = '/p/prisma'
 
-const STATS = [
-  { num: '14+', label: 'Years exhibiting' },
-  { num: '280', label: 'Artists represented' },
-  { num: '84k', label: 'Annual visitors' },
-  { num: '6', label: 'Active exhibitions' },
+const PILLARS = [
+  {
+    icon: '◈',
+    title: 'Culture Report',
+    desc: 'Long-form editorial documenting the movements, aesthetics and ideas reshaping contemporary culture across cities.',
+    color: 'var(--p-accent)',
+  },
+  {
+    icon: '◉',
+    title: 'Art & Design',
+    desc: 'Visual stories from studios, galleries and streets — the craft behind the culture.',
+    color: 'var(--p-violet)',
+  },
+  {
+    icon: '◎',
+    title: 'Event Coverage',
+    desc: 'On-the-ground documentation of shows, happenings and moments that matter.',
+    color: 'var(--p-magenta)',
+  },
 ]
 
 export default function Home() {
-  const currentShows = EXHIBITIONS.filter((e) => e.status === 'current')
-  const teaserArtists = ARTISTS.slice(0, 4)
+  const featuredArticles = ARTICLES.slice(0, 3)
+  const featuredEvents = EVENTS.slice(0, 2)
 
   return (
     <>
@@ -22,39 +36,42 @@ export default function Home() {
         <div className={s.container}>
           <div className={s.heroInner}>
             <div className={s.heroCard} data-reveal data-reveal-delay="0">
-              <div className={s.eyebrow}>Now Open in London</div>
+              <div className={s.eyebrow}>Est. {BRAND.est} &mdash; Global</div>
               <h1 className={s.h1}>
-                Art that <br />
-                <span className={s.gradText}>refuses</span> <br />
-                to whisper.
+                {BRAND.heroLine1}
+                <br />
+                <span className={s.gradText}>{BRAND.heroLine2}</span>
               </h1>
               <p className={s.lead} style={{ marginTop: 20 }}>
-                PRISMA brings together the most compelling voices in contemporary art — from
-                light-installation and generative painting to textile sculpture and biometric
-                performance. Six galleries. Zero compromises.
+                {BRAND.mission}
               </p>
               <div className={s.heroActions}>
-                <Link to={`${BASE}/exhibitions`} className={`${s.btn} ${s.btnPrimary}`}>
-                  View Exhibitions →
+                <Link to={`${BASE}/culture-report`} className={`${s.btn} ${s.btnPrimary}`}>
+                  Read the Archive &rarr;
                 </Link>
-                <Link to={`${BASE}/contact`} className={`${s.btn} ${s.btnGlass}`}>
-                  Book Tickets
+                <Link to={`${BASE}/events`} className={`${s.btn} ${s.btnGlass}`}>
+                  Event Coverage
                 </Link>
               </div>
 
               <div className={s.floatChips}>
-                <span className={s.chip}>
-                  <span className={s.chipDot} />
-                  Luminous Void — Now Showing
-                </span>
-                <span className={s.chip}>
-                  <span className={s.chipDot} style={{ background: 'var(--p-accent)', boxShadow: '0 0 8px var(--p-accent)' }} />
-                  Free entry under 12
-                </span>
-                <span className={s.chip}>
-                  <span className={s.chipDot} style={{ background: 'var(--p-violet)', boxShadow: '0 0 8px var(--p-violet)' }} />
-                  Open Tue – Sun
-                </span>
+                {BRAND.cities.slice(0, 4).map((city, i) => (
+                  <span key={city} className={s.chip}>
+                    <span
+                      className={s.chipDot}
+                      style={
+                        i === 1
+                          ? { background: 'var(--p-accent)', boxShadow: '0 0 8px var(--p-accent)' }
+                          : i === 2
+                          ? { background: 'var(--p-violet)', boxShadow: '0 0 8px var(--p-violet)' }
+                          : i === 3
+                          ? { background: 'var(--p-magenta)', boxShadow: '0 0 8px var(--p-magenta)' }
+                          : undefined
+                      }
+                    />
+                    {city}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -77,69 +94,53 @@ export default function Home() {
 
       <hr className={s.divider} />
 
-      {/* ── Featured Exhibition ── */}
+      {/* ── Three Pillars ── */}
       <section className={s.section}>
         <div className={s.container}>
           <div className={s.sectionHead}>
             <div>
-              <div className={s.eyebrow}>Now Showing</div>
-              <h2 className={s.h2}>Featured Exhibition</h2>
+              <div className={s.eyebrow}>What we do</div>
+              <h2 className={s.h2}>The Archive</h2>
             </div>
-            <Link to={`${BASE}/exhibitions`} className={`${s.btn} ${s.btnGlass}`} style={{ flexShrink: 0 }}>
-              All exhibitions →
-            </Link>
           </div>
-
-          <div className={s.featured} data-reveal>
-            <div className={s.featuredMedia}>
-              <img
-                src={`https://picsum.photos/seed/${FEATURED.seed}/800/600`}
-                alt={FEATURED.title}
-                loading="lazy"
-                width={800}
-                height={600}
-                sizes="(max-width: 860px) 100vw, 50vw"
-              />
-            </div>
-            <div className={s.featuredBody}>
-              <div className={s.eyebrow}>Current</div>
-              <h3 className={s.h3}>{FEATURED.title}</h3>
-              <div className={s.featuredMeta}>
-                <span>{FEATURED.artist}</span>
-                <span>·</span>
-                <span>{FEATURED.dates}</span>
-                <span>·</span>
-                <span>{FEATURED.location}</span>
+          <div className={s.grid}>
+            {PILLARS.map((p, i) => (
+              <div
+                key={p.title}
+                className={s.pillarTile}
+                data-reveal
+                data-reveal-delay={i * 100}
+              >
+                <span className={s.pillarIcon} style={{ color: p.color }}>{p.icon}</span>
+                <h3 className={s.h3} style={{ marginTop: 16 }}>{p.title}</h3>
+                <p style={{ color: 'var(--p-muted)', marginTop: 10, fontSize: '0.95rem', lineHeight: 1.7 }}>
+                  {p.desc}
+                </p>
               </div>
-              <p style={{ color: 'var(--p-muted)', fontSize: '0.95rem', lineHeight: 1.7, marginTop: 4 }}>
-                {FEATURED.description.slice(0, 220)}…
-              </p>
-              <div style={{ marginTop: 12 }}>
-                <Link to={`${BASE}/exhibitions`} className={`${s.btn} ${s.btnPrimary}`}>
-                  Explore exhibition
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       <hr className={s.divider} />
 
-      {/* ── Currently On ── */}
+      {/* ── Featured Articles ── */}
       <section className={s.section}>
         <div className={s.container}>
           <div className={s.sectionHead}>
             <div>
-              <div className={s.eyebrow}>On View</div>
-              <h2 className={s.h2}>Currently Showing</h2>
+              <div className={s.eyebrow}>Latest</div>
+              <h2 className={s.h2}>Culture Report</h2>
             </div>
+            <Link to={`${BASE}/culture-report`} className={`${s.btn} ${s.btnGlass}`} style={{ flexShrink: 0 }}>
+              Full archive &rarr;
+            </Link>
           </div>
           <div className={s.grid}>
-            {currentShows.map((ex, i) => (
+            {featuredArticles.map((art, i) => (
               <Link
-                key={ex.id}
-                to={`${BASE}/exhibitions`}
+                key={art.id}
+                to={`${BASE}/culture-report`}
                 className={s.card}
                 data-reveal
                 data-reveal-delay={i * 100}
@@ -147,19 +148,24 @@ export default function Home() {
               >
                 <div className={s.cardMedia}>
                   <img
-                    src={`https://picsum.photos/seed/${ex.seed}/600/450`}
-                    alt={ex.title}
+                    src={`https://picsum.photos/seed/${art.seed}/600/450`}
+                    alt={art.title}
                     loading="lazy"
                     width={600}
                     height={450}
                     sizes="(max-width: 600px) 100vw, 33vw"
                   />
-                  <span className={`${s.badge} ${s.badgeCurrent}`}>Current</span>
+                  <span className={`${s.badge} ${s.badgeUpcoming}`}>{art.cat}</span>
                 </div>
                 <div className={s.cardBody}>
-                  <h3 className={s.cardTitle}>{ex.title}</h3>
-                  <p className={s.cardSub}>{ex.artist} · {ex.location}</p>
-                  <p className={s.cardSub} style={{ marginTop: 4 }}>{ex.dates}</p>
+                  <p className={s.cardSub} style={{ marginBottom: 6 }}>{art.city} &middot; {art.date}</p>
+                  <h3 className={s.cardTitle}>{art.title}</h3>
+                  <p className={s.cardSub} style={{ marginTop: 8, lineHeight: 1.6 }}>
+                    {art.excerpt.slice(0, 90)}&hellip;
+                  </p>
+                  <p className={s.cardSub} style={{ marginTop: 8, color: 'var(--p-accent)' }}>
+                    {art.read} read
+                  </p>
                 </div>
               </Link>
             ))}
@@ -169,97 +175,89 @@ export default function Home() {
 
       <hr className={s.divider} />
 
-      {/* ── Artists Teaser ── */}
+      {/* ── Events Teaser ── */}
       <section className={s.section}>
         <div className={s.container}>
           <div className={s.sectionHead}>
             <div>
-              <div className={s.eyebrow}>Represented</div>
-              <h2 className={s.h2}>Our Artists</h2>
+              <div className={s.eyebrow}>On the ground</div>
+              <h2 className={s.h2}>Event Coverage</h2>
             </div>
-            <Link to={`${BASE}/artists`} className={`${s.btn} ${s.btnGlass}`} style={{ flexShrink: 0 }}>
-              All artists →
+            <Link to={`${BASE}/events`} className={`${s.btn} ${s.btnGlass}`} style={{ flexShrink: 0 }}>
+              All events &rarr;
             </Link>
           </div>
-          <div className={s.gridArtists}>
-            {teaserArtists.map((ar, i) => (
-              <div
-                key={ar.id}
-                className={s.artistCard}
-                data-reveal
-                data-reveal-delay={i * 90}
-              >
-                <div className={s.artistMedia}>
-                  <img
-                    src={`https://picsum.photos/seed/${ar.seed}/400/400`}
-                    alt={ar.name}
-                    loading="lazy"
-                    width={400}
-                    height={400}
-                    sizes="(max-width: 600px) 50vw, 25vw"
-                  />
-                </div>
-                <div className={s.artistBody}>
-                  <div className={s.artistName}>{ar.name}</div>
-                  <div className={s.artistDisc}>{ar.discipline}</div>
-                </div>
+          <div className={s.featured} data-reveal>
+            <div className={s.featuredMedia}>
+              <img
+                src={`https://picsum.photos/seed/${featuredEvents[0].seed}/800/600`}
+                alt={featuredEvents[0].name}
+                loading="lazy"
+                width={800}
+                height={600}
+                sizes="(max-width: 860px) 100vw, 50vw"
+              />
+            </div>
+            <div className={s.featuredBody}>
+              <div className={s.eyebrow}>{featuredEvents[0].tag}</div>
+              <h3 className={s.h3}>{featuredEvents[0].name}</h3>
+              <div className={s.featuredMeta}>
+                <span>{featuredEvents[0].city}</span>
+                <span>&middot;</span>
+                <span>{featuredEvents[0].date}</span>
+                <span>&middot;</span>
+                <span
+                  style={{
+                    color:
+                      featuredEvents[0].status === 'Upcoming'
+                        ? 'var(--p-accent)'
+                        : 'var(--p-teal)',
+                  }}
+                >
+                  {featuredEvents[0].status}
+                </span>
               </div>
-            ))}
+              <p style={{ color: 'var(--p-muted)', fontSize: '0.95rem', lineHeight: 1.7, marginTop: 4 }}>
+                {featuredEvents[0].excerpt}
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <Link to={`${BASE}/events`} className={`${s.btn} ${s.btnPrimary}`}>
+                  All event coverage
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <hr className={s.divider} />
 
-      {/* ── Newsletter ── */}
+      {/* ── Contact CTA ── */}
       <section className={s.section}>
         <div className={s.container}>
-          <NewsletterForm />
+          <div className={s.newsletter} data-reveal>
+            <div>
+              <div className={s.eyebrow}>Work with us</div>
+              <h2 className={s.h2} style={{ marginTop: 8 }}>
+                Let&apos;s create something
+                <br />
+                <span className={s.gradText}>worth archiving.</span>
+              </h2>
+            </div>
+            <p className={s.lead}>
+              From editorial partnerships to event coverage and creative direction &mdash; we translate culture into lasting insight.
+            </p>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <Link to={`${BASE}/services`} className={`${s.btn} ${s.btnPrimary}`}>
+                Creative Services &rarr;
+              </Link>
+              <Link to={`${BASE}/contact`} className={`${s.btn} ${s.btnGlass}`}>
+                Get in touch
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </>
-  )
-}
-
-function NewsletterForm() {
-  return (
-    <div className={s.newsletter} data-reveal>
-      <div>
-        <div className={s.eyebrow}>Stay in the loop</div>
-        <h2 className={s.h2} style={{ marginTop: 8 }}>
-          Openings, talks, <br />
-          <span className={s.gradText}>late nights.</span>
-        </h2>
-      </div>
-      <p className={s.lead}>
-        Join 12,000 subscribers who hear about private views, artist talks, and collector
-        events before they go public.
-      </p>
-      <form
-        className={s.formRow}
-        onSubmit={(e) => {
-          e.preventDefault()
-          const input = e.currentTarget.querySelector('input')
-          if (input) {
-            input.value = ''
-            input.placeholder = 'You\'re on the list. Welcome.'
-          }
-        }}
-      >
-        <input
-          type="email"
-          required
-          placeholder="your@email.com"
-          className={s.input}
-          aria-label="Email address"
-        />
-        <button type="submit" className={`${s.btn} ${s.btnPrimary}`}>
-          Subscribe →
-        </button>
-      </form>
-      <p style={{ color: 'var(--p-muted)', fontSize: '0.78rem', marginTop: -8 }}>
-        No spam. Unsubscribe any time. Your data stays with PRISMA.
-      </p>
-    </div>
   )
 }

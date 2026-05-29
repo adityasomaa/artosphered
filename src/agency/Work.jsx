@@ -5,11 +5,11 @@ export default function Work() {
   return (
     <>
       <section className="ag-pagehead ag-container">
-        <p className="ag-eyebrow" data-reveal>The demos · 5 sites · 25 pages</p>
-        <h1 data-reveal data-reveal-delay="80">Explore the work.</h1>
+        <p className="ag-eyebrow" data-reveal>5 directions · 25 pages</p>
+        <h1 data-reveal data-reveal-delay="80">Redesigning<br />ARTOSPHERED.</h1>
         <p className="ag-lead" data-reveal data-reveal-delay="160" style={{ marginTop: '1.4rem' }}>
-          Five complete, production-grade demo sites — each with its own identity, five pages and unique
-          interactions. This is the standard of what we’ll build for your brand.
+          Five complete redesign directions for the cultural archive — same brand and content, each with its
+          own identity, five pages, smooth scrolling, a signature loader and unique interactions.
         </p>
       </section>
 
